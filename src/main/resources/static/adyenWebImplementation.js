@@ -5,41 +5,10 @@ const type = document.getElementById("type").innerHTML;
 async function startCheckout() {
     try {
         // call `/paymentMethods` endpoint
-        let paymentMethodsResponse = await sendPostRequest("/api/paymentMethods");
 
         // configure drop-in
-        const configuration = {
-            paymentMethodsResponse: paymentMethodsResponse,
-            clientKey,
-            locale: "en_US",
-            environment: "test",
-            showPayButton: true,
-            paymentMethodsConfiguration: {
-                card: {
-                    hasHolderName: true,
-                    holderNameRequired: true,
-                    name: "Credit or debit card",
-                    amount: {
-                        value: 9999,
-                        currency: "EUR",
-                    },
-                }
-            },
-            onSubmit: async (state, component) => {
-                if (state.isValid) {
-                    const response = await sendPostRequest("/api/payments", state.data);
-                    handleResponse(response, component);
-                }
-            },
-            onAdditionalDetails: async (state, component) => {
-                const response = await sendPostRequest("/api/payments/details", state.data);
-                handleResponse(response, component);
-            }
-        };
 
         // Initiate AdyenCheckout and mount the element onto the `payment`-div.
-        let adyenCheckout = await new AdyenCheckout(configuration);
-        adyenCheckout.create(type).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");

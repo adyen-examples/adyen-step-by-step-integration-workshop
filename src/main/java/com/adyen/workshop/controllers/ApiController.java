@@ -42,81 +42,23 @@ public class ApiController {
 
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        var paymentMethodsRequest = new PaymentMethodsRequest();
 
-        paymentMethodsRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
-        paymentMethodsRequest.setChannel(PaymentMethodsRequest.ChannelEnum.WEB);
-
-        log.info("Retrieving available Payment Methods from Adyen {}", paymentMethodsRequest);
-        var response = paymentsApi.paymentMethods(paymentMethodsRequest);
         return ResponseEntity.ok()
-                .body(response);
+                .body(null);
     }
 
     @PostMapping("/api/payments")
     public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
 
-        // define PaymentRequest
-        var paymentRequest = new PaymentRequest();
-
-        paymentRequest.setAmount(
-                new Amount()
-                        .currency("EUR")
-                        .value(9999L));
-
-        paymentRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
-        paymentRequest.setPaymentMethod(body.getPaymentMethod());
-
-        var orderRef = UUID.randomUUID().toString();
-        paymentRequest.setReference(orderRef);
-        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/api/handleShopperRedirect?orderRef=" + orderRef); // Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=...
-
-        // 3DS2
-//        var authenticationData = new AuthenticationData();
-//        authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
-//        paymentRequest.setAuthenticationData(authenticationData);
-//
-//        paymentRequest.setOrigin(request.getScheme() + "://" + host); // Turns into http://localhost:8080
-//        paymentRequest.setBrowserInfo(body.getBrowserInfo());
-//        paymentRequest.setShopperIP(request.getRemoteAddr());
-//
-//        var billingAddress = new BillingAddress();
-//        billingAddress.setCity("Amsterdam");
-//        billingAddress.setCountry("NL");
-//        billingAddress.setPostalCode("1012KK");
-//        billingAddress.setStreet("Rokin");
-//        billingAddress.setHouseNumberOrName("49");
-//        paymentRequest.setBillingAddress(billingAddress);
-
-        paymentRequest.setChannel(PaymentRequest.ChannelEnum.WEB);
-        paymentRequest.setCountryCode("NL");
-        paymentRequest.setShopperEmail("S.hopper@adyen.com");
-
-        // Idempotency
-        var requestOptions = new RequestOptions();
-        requestOptions.setIdempotencyKey(UUID.randomUUID().toString());
-
-        // make payment
-        log.info("PaymentsRequest {}", paymentRequest);
-        var response = paymentsApi.payments(paymentRequest, requestOptions);
-        log.info("PaymentsResponse {}", response);
-
-        SessionManager.setPspReference(response.getPspReference());
-
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok()
+                .body(null);
     }
 
     @PostMapping("/api/payments/details")
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException {
         // submit payment details
 
-        log.info("PaymentDetailsRequest {}", detailsRequest);
-        var response = paymentsApi.paymentsDetails(detailsRequest);
-        log.info("PaymentsResponse {}", response);
-
-        SessionManager.setPspReference(response.getPspReference());
-
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(null);
     }
 
     // Handle redirect during payment.
@@ -169,28 +111,7 @@ public class ApiController {
     @PostMapping("/api/refund")
     public ResponseEntity<PaymentRefundResponse> refund() throws Exception {
 
-        PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
-        Amount amount = new Amount();
-        amount.setCurrency("EUR");
-        amount.setValue(9999L);
-        paymentRefundRequest.setAmount(amount);
-        paymentRefundRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
-        paymentRefundRequest.setReference("YOUR_UNIQUE_REFERENCE_REFUND");
-
-        String paymentPspReference = SessionManager.getPspReference();
-
-        if(paymentPspReference == null) {
-            return ResponseEntity.unprocessableEntity().body(null);
-        }
-
-        PaymentRefundResponse response = modificationsApi.refundCapturedPayment(paymentPspReference, paymentRefundRequest);
-        log.info("PaymentRefundResponse {}", response);
-
-        if(response.getStatus().equals(PaymentRefundResponse.StatusEnum.RECEIVED)) {
-            SessionManager.removePspRerefence();
-        }
-
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(null);
     }
 
 }
