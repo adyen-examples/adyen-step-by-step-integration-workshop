@@ -59,36 +59,36 @@ public class ApiController {
         // define PaymentRequest
         var paymentRequest = new PaymentRequest();
 
-        var amount = new Amount()
-                .currency("EUR")
-                .value(9999L);
-        paymentRequest.setAmount(amount);
+        paymentRequest.setAmount(
+                new Amount()
+                        .currency("EUR")
+                        .value(9999L));
 
         paymentRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
-        paymentRequest.setChannel(PaymentRequest.ChannelEnum.WEB);
+        paymentRequest.setPaymentMethod(body.getPaymentMethod());
 
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
         paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/api/handleShopperRedirect?orderRef=" + orderRef); // Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=...
 
         // 3DS2
-        var authenticationData = new AuthenticationData();
-        authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
-        paymentRequest.setAuthenticationData(authenticationData);
+//        var authenticationData = new AuthenticationData();
+//        authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
+//        paymentRequest.setAuthenticationData(authenticationData);
+//
+//        paymentRequest.setOrigin(request.getScheme() + "://" + host); // Turns into http://localhost:8080
+//        paymentRequest.setBrowserInfo(body.getBrowserInfo());
+//        paymentRequest.setShopperIP(request.getRemoteAddr());
+//
+//        var billingAddress = new BillingAddress();
+//        billingAddress.setCity("Amsterdam");
+//        billingAddress.setCountry("NL");
+//        billingAddress.setPostalCode("1012KK");
+//        billingAddress.setStreet("Rokin");
+//        billingAddress.setHouseNumberOrName("49");
+//        paymentRequest.setBillingAddress(billingAddress);
 
-        paymentRequest.setOrigin(request.getScheme() + "://" + host); // Turns into http://localhost:8080
-        paymentRequest.setBrowserInfo(body.getBrowserInfo());
-        paymentRequest.setShopperIP(request.getRemoteAddr());
-        paymentRequest.setPaymentMethod(body.getPaymentMethod());
-
-        var billingAddress = new BillingAddress();
-        billingAddress.setCity("Amsterdam");
-        billingAddress.setCountry("NL");
-        billingAddress.setPostalCode("1012KK");
-        billingAddress.setStreet("Rokin");
-        billingAddress.setHouseNumberOrName("49");
-        paymentRequest.setBillingAddress(billingAddress);
-
+        paymentRequest.setChannel(PaymentRequest.ChannelEnum.WEB);
         paymentRequest.setCountryCode("NL");
         paymentRequest.setShopperEmail("S.hopper@adyen.com");
 
@@ -102,6 +102,7 @@ public class ApiController {
         log.info("PaymentsResponse {}", response);
 
         SessionManager.setPspReference(response.getPspReference());
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -112,7 +113,9 @@ public class ApiController {
         log.info("PaymentDetailsRequest {}", detailsRequest);
         var response = paymentsApi.paymentsDetails(detailsRequest);
         log.info("PaymentsResponse {}", response);
+
         SessionManager.setPspReference(response.getPspReference());
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -182,6 +185,10 @@ public class ApiController {
 
         PaymentRefundResponse response = modificationsApi.refundCapturedPayment(paymentPspReference, paymentRefundRequest);
         log.info("PaymentRefundResponse {}", response);
+
+        if(response.getStatus().equals(PaymentRefundResponse.StatusEnum.RECEIVED)) {
+            SessionManager.removePspRerefence();
+        }
 
         return ResponseEntity.ok().body(response);
     }
