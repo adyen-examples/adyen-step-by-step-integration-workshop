@@ -34,11 +34,6 @@ public class ApiController {
         this.modificationsApi = modificationsApi;
     }
 
-    @GetMapping("/hello-world")
-    public ResponseEntity<String> helloWorld() throws Exception {
-        return ResponseEntity.ok()
-                .body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
-    }
 
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
