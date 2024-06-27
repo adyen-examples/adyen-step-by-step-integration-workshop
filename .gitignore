@@ -34,3 +34,4 @@ replay_pid*
 .DS_Store
 
 application-dev.properties
+application-bck.properties
