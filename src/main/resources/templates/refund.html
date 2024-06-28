@@ -21,7 +21,7 @@
                     // Handle response data
                     console.log('Success:', data);
                     const messageDiv = document.getElementById('message');
-                    messageDiv.textContent = 'Refund processed successfully!  Status: ' + data.status +
+                    messageDiv.textContent = 'Refund request submitted!  Status: ' + data.status +
                     ' pspReference: ' + data.pspReference;
                 })
                 .catch((error) => {
