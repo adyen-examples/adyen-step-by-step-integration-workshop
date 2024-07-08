@@ -16,10 +16,12 @@ body {
 a,
 u {
     text-decoration: none;
+    color: #0abf53;
 }
 
 a:hover {
     text-decoration: none;
+    font-weight: bolder;
 }
 
 .hidden {
@@ -60,12 +62,12 @@ a:hover {
 }
 
 .button:hover {
-    background: #1c3045;
+    background: #0abf53;
     box-shadow: 0 3px 4px rgba(0, 15, 45, 0.2);
 }
 
 .button:active {
-    background: #3a4a5c;
+    background: #0abf53;
 }
 
 .button:disabled {
@@ -128,12 +130,13 @@ a:hover {
     justify-content: center;
     align-items: center;
     border: 1px solid #f7f8f9;
+    transition: border 0.3s ease-in-out, box-shadow 0.3s ease-out;
 }
 
 .integration-list-item:hover {
     box-shadow: 0 16px 24px 0 #e5eaef;
     text-decoration: none;
-    border: 1px solid #06f;
+    border: 2px solid #0abf53;
 }
 
 @media (min-width: 768px) {

@@ -31,5 +31,7 @@ public class DependencyInjectionConfiguration {
     }
 
     @Bean
-    HMACValidator hmacValidator() { return new HMACValidator(); }
+    HMACValidator hmacValidator() {
+        return new HMACValidator();
+    }
 }
