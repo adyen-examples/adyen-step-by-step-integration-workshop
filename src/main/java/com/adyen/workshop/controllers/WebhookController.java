@@ -37,7 +37,35 @@ public class WebhookController {
 
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
-        // Step 17
-        return null;
+        var notificationRequest = NotificationRequest.fromJson(json);
+        var notificationRequestItem = notificationRequest.getNotificationItems().stream().findFirst();
+
+        try {
+            NotificationRequestItem item = notificationRequestItem.get();
+
+            if (!hmacValidator.validateHMAC(item, this.applicationConfiguration.getAdyenHmacKey())) {
+                log.warn("Could not validate HMAC signature for incoming webhook message: {}", item);
+                return ResponseEntity.unprocessableEntity().build();
+            }
+
+            // Success, log it for now
+            log.info("""
+                            Received webhook with event {} :\s
+                            Merchant Reference: {}
+                            Alias : {}
+                            PSP reference : {}""",
+                    item.getEventCode(),
+                    item.getMerchantReference(),
+                    item.getAdditionalData().get("alias"),
+                    item.getPspReference());
+
+            return ResponseEntity.accepted().build();
+        } catch (SignatureException e) {
+            // Handle invalid signature
+            return ResponseEntity.unprocessableEntity().build();
+        } catch (Exception e) {
+            // Handle all other errors
+            return ResponseEntity.status(500).build();
+        }
     }
 }
