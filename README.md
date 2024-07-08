@@ -691,6 +691,8 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
 
 Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/).
 
+You can now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution/src).
+
 **Step 18.** Enable [iDeal](https://docs.adyen.com/payment-methods/ideal/web-drop-in/).
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
    - On the frontend, modify your configuration so that it pre-selects an iDeal issuer + shows the images of the bank logos
