@@ -18,7 +18,7 @@ public class ApplicationConfiguration {
     private String adyenClientKey;
 
     @Value("${ADYEN_HMAC_KEY:#{null}}")
-    private String adyenHmacKey;
+    private String adyenHmacKey; // We'll cover this in step 16.
 
     public int getServerPort() {
         return serverPort;

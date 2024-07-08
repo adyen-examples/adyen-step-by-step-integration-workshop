@@ -37,7 +37,7 @@ public class WebhookController {
 
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
-        // Step 17
+        // Step 16
         return null;
     }
 }
