@@ -34,35 +34,34 @@ public class ApiController {
 
     @GetMapping("/hello-world")
     public ResponseEntity<String> helloWorld() throws Exception {
+        // Step 0
         return ResponseEntity.ok()
                 .body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
     }
 
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        var paymentMethodsRequest = new PaymentMethodsRequest();
-
         // Step 7
-
-        var response = paymentsApi.paymentMethods(paymentMethodsRequest);
-        return ResponseEntity.ok()
-                .body(response);
+        return null;
     }
 
     @PostMapping("/api/payments")
     public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
+        // Step 9
         return null;
     }
 
     @PostMapping("/api/payments/details")
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException {
-        // Step 11
+        // Step 12
+        var pay = new PaymentRequest();
+        pay.setShopperInteraction(PaymentRequest.ShopperInteractionEnum.ECOMMERCE);
         return null;
     }
 
     @GetMapping("/api/handleShopperRedirect")
     public RedirectView redirect(@RequestParam(required = false) String payload, @RequestParam(required = false) String redirectResult) throws IOException, ApiException {
-        // Step 12
+        // Step 13
         return null;
     }
 }
