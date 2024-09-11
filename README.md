@@ -1,41 +1,40 @@
-# Build Your Payment Integration with Adyen - A Step-by-Step Guide
+# Build Your Own Payment Integration with Adyen - A Step-by-Step Guide
+
+This repository contains a step-by-step guide to building a payment integration with Adyen.
+This README will guide you through the steps to build an Adyen integration and make your first payment on the Adyen TEST environment. We'll cover three main steps:
+* The initial configuration & setup: Adyen Merchant Account, Adyen API Credentials, and Adyen Client Key.
+* The API requests needed to fetch the payment methods and make your first TEST payment: `/paymentMethods`, `/payments`, `/payments/details`, and 3D Secure 2.
+* The webhooks: Setup, configuration, and response handling.
 
 ### Prerequisites
 
-_Note: We ask you to start with a clean Adyen Merchant Account for this workshop._
+You'll need a few things to get started:
+* Access to an [Adyen Test Account](https://www.adyen.com/signup).
+* You can login to the [Adyen Customer Area on TEST](https://ca-test.adyen.com/) and navigate to your Merchant Account (ECOM).
+* An IDE (like IntelliJ or VsCode) and Java SDK v17+, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces or [Gitpod](https://gitpod.io/#https://github.com/adyen-examples/adyen-step-by-step-integration-workshop).
 
-You will need a few things to get started:
-
-* an IDE (like IntelliJ or VsCode) and Java SDK v17+, alternatively: you can spin up this workspace in a browser-IDE such as codespaces or [Gitpod](https://gitpod.io/#https://github.com/adyen-examples/adyen-step-by-step-integration-workshop).
-* Access to an [Adyen Test Account](https://www.adyen.com/signup) (ECOM).
-
-
-
-
-## Introduction
-
-This repository is a step-by-step guide to building your payment integration with Adyen.
-We'll guide you through the steps to build an Adyen integration and make your first payment on the Adyen TEST environment. We'll cover three main steps:
-* The initial setup: Adyen Merchant Account, Adyen API Credentials, and Adyen Client Key.
-* The API requests needed: `/paymentMethods`, `/payments`, `/payments/details`, and 3D Secure 2).
-* The webhooks: Setup, configuration, and response handling.
 
 
 ### Context of the code repository.
 
 This workshop uses a Java+Spring Boot in the backend with a static (HTML/CSS/Javascript) frontend with a `thymeleaf` template (a server-side Java template engine that can process HTML).
 
-_Note: If the static frontend environment is not to your liking, feel free to implement your own frontend solution using the framework of your choice (f.e. using Node.js)._
-
 In this workshop, we're not asking you to build a complete integration from scratch but rather to fill in the voids based on resources you can find in the [Adyen Documentation](https://docs.adyen.com)
 or other online resources ([GitHub](https://github.com/adyen), [GitHub Examples](https://github.com/adyen-examples), [Adyen Help](https://help.adyen.com) etc.).
-We use an empty Spring Boot template at the start, which you'll extend into a fully working application that can accept payments.
+We use an empty Spring Boot template at the start, which you'll extend into a fully working application that can accept payments on TEST.
 
+### High-level overview
+The focus will be on the frontend (yellow) and the backend (blue) parts of the application.
+- Set up keys in [`ApplicationConfiguration.java`](./src/main/java/com/adyen/workshop/configurations/ApplicationConfiguration.java) and use these keys to instantiate the objects we need in [`DependencyInjectionConfiguration.java`](./src/main/java/com/adyen/workshop/configurations/DependencyInjectionConfiguration.java) to securely communicate with Adyen.
+- Frontend (yellow): Use the [`Adyen.Web Drop-in`](https://github.com/Adyen/adyen-web) in [`adyenWebImplementation.js`](/src/main/resources/static/adyenWebImplementation.js) to render payment methods, handle authentication and show it to the shopper.
+- Backend (blue): Use the [`Adyen Java Library`](https://github.com/Adyen/adyen-java-api-library) in [`ApiController.java`](./src/main/java/com/adyen/workshop/controllers/ApiController.java) to handle incoming requests and securely send them to Adyen.
+- Backend (blue): Use the [`Adyen Java Library`](https://github.com/Adyen/adyen-java-api-library) in [`WebController.java`](/src/main/java/com/adyen/workshop/controllers/WebhookController.java) to handle incoming webhooks that Adyen sends.
 
-
+![High-level overview of the project structure.](./docs/images/project-structure.png)
 
 ### Project Structure
-The project structure follows a Model-View-Controller (MVC) structure.
+
+The project structure follows a Model-View-Controller (MVC) structure. You can skip this if you're familiar with this.
 
 * The Java code is to be found in `src/main/java/com/adyen/workshop`
   * `/controllers` folder contains your endpoints. The following example creates the `/hello-world` endpoint; see `/controllers/ApiController.java.`
@@ -72,7 +71,6 @@ The project structure follows a Model-View-Controller (MVC) structure.
 
 ## Workshop: Accepting Online Payments using the Advanced flow
 Learn how to integrate with Adyen using the `/paymentMethods`, `/payments` and `/payments/details` endpoints.
-
 
 
 
@@ -197,6 +195,9 @@ For your convenience, we've **already included this in this project**. You can v
   - Note: If the `Embed script and stylesheet` tab shows `'Coming soon!'`, don't worry, you can grab an earlier version of `Web Components/Drop-in`
 
 
+We're now set up to do the `/paymentMethods`, `/payments` and `/payments/details` calls. In the following steps, we'll have you implement this. Let's have a look at the flow first:
+![Adyen.Web Drop-in Advanced Flow](./docs/images/drop-in-flow.jpg)
+
 
 **Step 7.** Let's prepare our backend (`com/adyen/workshop/controllers`) to [retrieve a list of available payment methods](https://docs.adyen.com/online-payments/build-your-integration/advanced-flow/?platform=Web&integration=Drop-in&version=5.63.0&programming_language=java#web-advanced-flow-post-payment-methods-request). Go to `ApiController.java` and use the `paymentsApi` to make `/paymentMethods`-request to Adyen.
 
@@ -223,7 +224,7 @@ For your convenience, we've **already included this in this project**. You can v
 
 **Note:** You can send a `curl-request` to test this endpoint. However, let's move on to step 8 to see how the Drop-in (frontend) interacts with this `/api/paymentMethods` endpoint.
 
-**Step 8.** On your frontend (`adyenWebImplementation.js`), let's make a request to this `/api/paymentMethods` endpoint and display the payment methods to the shopper.
+**Step 8.** In the frontend (`adyenWebImplementation.js`), let's make a request to this `/api/paymentMethods` endpoint and display the payment methods to the shopper.
 
 We automatically pass on your public `ADYEN_CLIENT_KEY` to your frontend, you can access this variable using `clientKey`.
 
@@ -713,7 +714,7 @@ Congratulations, you've successfully built an integration with Adyen! You can no
 You can now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution/src).
 
 
-In future versions of the workshop, we'll use this module (`Module 1`) as a base line. We'll then add different payment method in different modules, for now you can try enabling the following payment methods:
+If you want to go the extra mile, you can try enabling the following payment methods:
 
 **Step 18.** Enable [iDeal](https://docs.adyen.com/payment-methods/ideal/web-drop-in/).
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
