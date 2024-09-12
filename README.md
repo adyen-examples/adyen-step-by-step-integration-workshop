@@ -137,7 +137,9 @@ export ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountName'
 You can now access your keys in your application anywhere:
 - `applicationConfiguration.getAdyenApiKey()`
 - `applicationConfiguration.getAdyenClientKey()`
-- `applicationConfiguration.getAdyenMerchantAccount()`.
+- `applicationConfiguration.getAdyenMerchantAccount()`
+
+*Note: We'll create the HMAC Key later, you can ignore this for now.*
 
 **Additional context:**
 
@@ -274,7 +276,7 @@ async function startCheckout() {
 
 // Step 10 - Handles responses, do a simple redirect based on the result.
 function handleResponse(response, component) {
-
+  // We'll leave this empty for now and fix this in step 10.
 }
 
 // This function sends a POST request to your specified URL,
