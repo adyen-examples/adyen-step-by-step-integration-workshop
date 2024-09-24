@@ -347,13 +347,14 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
 
 
 **Step 10.** Let's send a request to our backend from our frontend, and modify `adyenWebImplementation.js` to override the `onSubmit(...)` function to send a request to the `/api/payments` endpoint.
-We've added **two things* to the existing functionality here:
-* the `onSubmit(...)` event handler
-* the `handleResponse(response, component)` function to handle the response (which is doing a simple redirect based on the response)
-
 
 <details>
 <summary>Click to show me the answer</summary>
+
+We've added **two things** to the existing functionality here:
+* the `onSubmit(...)` event handler
+* the `handleResponse(response, component)` function to handle the response (which is doing a simple redirect based on the response)
+
 
 ```js
 // ...
