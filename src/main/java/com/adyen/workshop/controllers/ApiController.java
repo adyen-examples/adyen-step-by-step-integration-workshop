@@ -53,9 +53,6 @@ public class ApiController {
 
     @PostMapping("/api/payments/details")
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException {
-        // Step 12
-        var pay = new PaymentRequest();
-        pay.setShopperInteraction(PaymentRequest.ShopperInteractionEnum.ECOMMERCE);
         return null;
     }
 

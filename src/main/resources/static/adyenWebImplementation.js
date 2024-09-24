@@ -6,10 +6,11 @@ async function startCheckout() {
     // Step 8
 }
 
-// Step 12 - Handles responses, do a simple redirect based on the result.
+// Step 10 - Handles responses, do a simple redirect based on the result.
 function handleResponse(response, component) {
-
+    // We'll leave this empty for now and fix this in step 10.
 }
+
 
 // This function sends a POST request to your specified URL,
 // the `data`-parameters will be serialized as JSON in the body parameters.

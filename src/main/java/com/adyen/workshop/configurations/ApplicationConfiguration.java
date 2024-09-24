@@ -8,16 +8,16 @@ public class ApplicationConfiguration {
     @Value("${server.port}")
     private int serverPort;
 
-    @Value("${ADYEN_API_KEY:#{null}}")
+    @Value("${ADYEN_API_KEY:#{null}}") // Don't edit @Value(...)
     private String adyenApiKey;
 
-    @Value("${ADYEN_MERCHANT_ACCOUNT:#{null}}")
+    @Value("${ADYEN_MERCHANT_ACCOUNT:#{null}}") // Don't edit @Value(...)
     private String adyenMerchantAccount;
 
-    @Value("${ADYEN_CLIENT_KEY:#{null}}")
+    @Value("${ADYEN_CLIENT_KEY:#{null}}") // Don't edit @Value(...)
     private String adyenClientKey;
 
-    @Value("${ADYEN_HMAC_KEY:#{null}}")
+    @Value("${ADYEN_HMAC_KEY:#{null}}") // Don't edit @Value(...)
     private String adyenHmacKey; // We'll cover this in step 16.
 
     public int getServerPort() {
