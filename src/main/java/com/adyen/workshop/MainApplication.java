@@ -26,8 +26,8 @@ public class MainApplication {
         log.info("\n----------------------------------------------------------\n\t" +
                 "Application is running on http://localhost:" + applicationConfiguration.getServerPort() +
                 "\nAPI KEY:" + (applicationConfiguration.getAdyenApiKey() != null) +
-                "\nApplication is running on http://localhost:" + (applicationConfiguration.getAdyenMerchantAccount() != null) +
-                "\nApplication is running on http://localhost:" + (applicationConfiguration.getAdyenClientKey() != null) +
+                "\nMerchant Account:" + (applicationConfiguration.getAdyenMerchantAccount() != null) +
+                "\nClient Key:" + (applicationConfiguration.getAdyenClientKey() != null) +
                 "\n----------------------------------------------------------");
     }
 }
