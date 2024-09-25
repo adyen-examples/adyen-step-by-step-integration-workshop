@@ -53,12 +53,13 @@ public class ApiController {
 
     @PostMapping("/api/payments/details")
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException {
+        // Step 13
         return null;
     }
 
     @GetMapping("/api/handleShopperRedirect")
     public RedirectView redirect(@RequestParam(required = false) String payload, @RequestParam(required = false) String redirectResult) throws IOException, ApiException {
-        // Step 13
+        // Step 14
         return null;
     }
 }
