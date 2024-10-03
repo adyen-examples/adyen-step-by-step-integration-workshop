@@ -10,8 +10,9 @@ tasks:
       ./gradlew bootJar
     command: |
       # Start application on port 8080
-      echo "Starting application..."
-      ./gradlew bootRun
+      #echo "Starting application..."
+      #./gradlew bootRun
+      echo "Start the application by running ./gradlew bootRun - You can use [control + C] to stop running your application."
 
 ports:
   - port: 8080

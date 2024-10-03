@@ -22,6 +22,7 @@ async function startCheckout() {
                     },
                 }
             },
+            // Step 8 onSubmit(...)
             onSubmit: async (state, component) => {
                 if (state.isValid) {
                     const response = await sendPostRequest("/api/payments", state.data);
@@ -44,6 +45,7 @@ async function startCheckout() {
     }
 }
 
+// Step 10 - Handles responses, do a redirect based on result.
 function handleResponse(response, component) {
     // Step 13 - If there's an action, handle it, otherwise redirect the user to the correct page based on the resultCode.
     if (response.action) {

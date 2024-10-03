@@ -41,7 +41,7 @@ public class ApiController {
 
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        // Step 7
+        // Step 7 - Add payment methods call
         var paymentMethodsRequest = new PaymentMethodsRequest();
         paymentMethodsRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
 
@@ -54,6 +54,7 @@ public class ApiController {
 
     @PostMapping("/api/payments")
     public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
+        // Step 9 - Add payments call 
         var paymentRequest = new PaymentRequest();
 
         var amount = new Amount()
@@ -67,9 +68,8 @@ public class ApiController {
 
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
-        // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
+        // The returnUrl: Once done with the payment, where should the application redirect you?
         paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/api/handleShopperRedirect"); // Example: Turns into http://localhost:8080/api/handleShopperRedirect
-
 
         // Step 12 3DS2 Redirect - Add the following additional parameters to your existing payment request
         var authenticationData = new AuthenticationData();
@@ -96,6 +96,7 @@ public class ApiController {
         billingAddress.setHouseNumberOrName("49");
         paymentRequest.setBillingAddress(billingAddress);
 
+        // Step 11 - Add idempotency key
         var requestOptions = new RequestOptions();
         requestOptions.setIdempotencyKey(UUID.randomUUID().toString());
 
