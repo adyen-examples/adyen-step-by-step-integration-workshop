@@ -37,6 +37,8 @@ public class WebhookController {
 
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
+        // Step 16 - Receive webhooks and verify the HMAC signature
+        log.info("Received webhook request: {}", json);
         var notificationRequest = NotificationRequest.fromJson(json);
         var notificationRequestItem = notificationRequest.getNotificationItems().stream().findFirst();
 
