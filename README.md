@@ -115,23 +115,32 @@ A browser should open with the following screen: **"Workshop: Build Your Own Ady
 
 
 **Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount and created credentials in the API Credentials page in the Customer Area).
-   - Pro-tip #1: Make sure you copy your key correctly.
+   - Pro-tip #1: Create your API Key on Merchant Account level & Make sure you copy your key correctly. 
    - Pro-tip #2: Make 101% sure you copy your key correctly! :)
+   - Pro-tip #3: **SAVE YOUR CHANGES**!!!
 
 
-**Step 3.** [Get your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key).
-   - Do **not** forget to add the correct URL to my allowed origins (e.g. `http://localhost:8080`, `https://*.gitpod.io`, or `https://*.github.dev`). This allows Adyen.Web Dropin/Components to load on your page. The `*`-symbol indicates to accept any subdomain.
+**Step 3.** [Generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key).
+   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080`, `https://*.gitpod.io`, or `https://*.github.dev`). This allows Adyen.Web Dropin/Components to load on your page. The `*`-symbol indicates to accept any subdomain. If no origin is added, you'll get an invalid origin error.
 
 
 **Step 4.** Add the following values from step 1-3 to `ApplicationConfiguration.java` in `/main/java/com/adyen/workshop/configurations`:
-   - Best practice: export the variables as follows so that the Spring Boot framework can automatically inject your variables on startup.
-   - If you're using gitpod/codespaces, you can export your variables as follows in your terminal:
-   - If you've used gitpod before, the program will inject previously used environment variables as configured in [https://gitpod.io/variables](https://gitpod.io/variables).
+   - Best practice: export the variables. The Spring Boot framework can automatically inject your variables on startup by matching the attributed string-values in your `ApplicationConfiguration.java`. 
+Example: `@Value("${ADYEN_API_KEY:#{null}}")` would try to see if you there's a value for `ADYEN_API_KEY` and if it cannot ifnd any, it will default to `null`.
+   - Open your terminal and execute the following command in your terminal:
 ```
 export ADYEN_API_KEY='Aq42....xx'
 export ADYEN_CLIENT_KEY='test_yourclientkey'
 export ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountName'
 ```
+   - [Ignore this, unless you've used gitpod before], gitpod will inject previously used environment variables as configured in [https://gitpod.io/variables](https://gitpod.io/variables) when you start a new workspace. The injection **only** happens when the workspace is started. If you've changed variables in [https://gitpod.io/variables](https://gitpod.io/variables) during this, your changes will **not** be reflected immediately. You can 'sync' your variables, by running `eval $(gp env -e)` in your terminal. This will import the variables into your gitpod workspace.
+   - Alternatively, if you do not want to use the terminal, you can insert your keys in the `application.properties`-file`.
+```
+ADYEN_API_KEY='Aq42....xx'
+ADYEN_CLIENT_KEY='test_yourclientkey'
+ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountName'
+```
+
 
 
 You can now access your keys in your application anywhere:
