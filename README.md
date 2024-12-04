@@ -99,6 +99,8 @@ In this workshop, you'll learn how to:
 
 ### Start - Step-by-Step Guide:
 
+Open this repository in codespaces, [Gitpod](https://gitpod.io/#https://github.com/adyen-examples/adyen-step-by-step-integration-workshop) or your (local) IDE.
+
 **Step 0.** Build the project using `./gradlew bootRun` and see if it works.
 
 If you see the following message in your console logs, it means that you've successfully ran the application.
