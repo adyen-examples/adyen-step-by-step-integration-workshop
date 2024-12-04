@@ -209,7 +209,7 @@ We're now set up to do the `/paymentMethods`, `/payments` and `/payments/details
 ![Adyen.Web Drop-in Advanced Flow](./docs/images/drop-in-flow.jpg)
 
 
-**Step 7.** Send a request to Adyen from (`/controllers/ApiController.java`) to [retrieve a list of available payment methods](https://docs.adyen.com/online-payments/build-your-integration/advanced-flow/?platform=Web&integration=Drop-in&version=5.63.0&programming_language=java#web-advanced-flow-post-payment-methods-request). Go to `ApiController.java` and use the `paymentsApi` to send `/paymentMethods`-request to Adyen. 
+**Step 7.** Send a request to Adyen from (`/controllers/ApiController.java`) to [retrieve a list of available payment methods](https://docs.adyen.com/online-payments/build-your-integration/advanced-flow/?platform=Web&integration=Drop-in&version=5.63.0&programming_language=java#web-advanced-flow-post-payment-methods-request). Go to `ApiController.java` and use the `paymentsApi` to send `/paymentMethods`-request to Adyen.
 
 
 <details>
@@ -544,13 +544,13 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 
 <details>
 <summary>Click to show me the answer</summary>
-	
+
 **Note:** Do not blindly copy paste, we're **extending** the PaymentRequest by adding additional parameters.
-	
+
 ```java
     @PostMapping("/api/payments")
     public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
-        var paymentRequest = new PaymentRequest(); // <--- 
+        var paymentRequest = new PaymentRequest(); // <---
         // ...
 
         // Step 12 3DS2 Redirect - Add the following additional parameters to your existing payment request for 3DS2 Redirect:
@@ -593,7 +593,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 ```java
     // Step 13 - Handle details call (triggered after Native 3DS2 flow)
     @PostMapping("/api/payments/details")
-    public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException 
+    public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException
     {
         log.info("PaymentDetailsRequest {}", detailsRequest);
         var response = paymentsApi.paymentsDetails(detailsRequest);
@@ -836,7 +836,8 @@ If you want to go the extra mile, you can try enabling the following payment met
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
    - Do not forget to add `LineItems` to your payment-request
 
+Well done! :)
 
 ## Contacting us
 
-If you have any questions, feel free to contact us at devrel@adyen.com.
+If you have any questions, contact us at devrel@adyen.com.
