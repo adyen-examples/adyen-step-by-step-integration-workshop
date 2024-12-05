@@ -130,7 +130,7 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
 
 **Step 4.** Add the following values from step 1-3 to `ApplicationConfiguration.java` in `/main/java/com/adyen/workshop/configurations`:
    - Best practice: export the variables. The Spring Boot framework can automatically inject your variables on startup by matching the attributed string-values in your `ApplicationConfiguration.java`. 
-Example: `@Value("${ADYEN_API_KEY:#{null}}")` would try to see if you there's a value for `ADYEN_API_KEY` and if it cannot ifnd any, it will default to `null`.
+Example: `@Value("${ADYEN_API_KEY:#{null}}")` would try to see if you there's a value for `ADYEN_API_KEY` and if it cannot find any, it will default to `null`.
    - Open your terminal and execute the following command in your terminal:
 ```bash
 export ADYEN_API_KEY='Aq42....xx'
