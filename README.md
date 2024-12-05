@@ -117,32 +117,29 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
 
 **Step 1.** [Create your Adyen Merchant Account](https://docs.adyen.com/account/manage-account-structure/#request-merchant-account) or use an existing Adyen Merchant Account associated with your account (ending with -`ECOM`). 
 
-
-**Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount and created credentials in the API Credentials page in the Customer Area).
-   - Pro-tip #1: Create your API Key on Merchant Account level & Make sure you copy your key correctly. 
+**Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount `-ECOM` and created credentials in the API Credentials page in the Customer Area).
+**And** [generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key) on the same page as where you create your API Key.
+   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080`, `https://*.gitpod.io`, or `https://*.github.dev`). This allows the Adyen.Web Dropin/Components to load on your specified page. The `*`-symbol indicates to accept any subdomain.
+   - Pro-tip #1: Create your API Key on Merchant Account level & Make sure you **copy your key correctly**.
    - Pro-tip #2: Make 101% sure you copy your key correctly! :)
-   - Pro-tip #3: **SAVE YOUR CHANGES**!!!
+   - Pro-tip #3: **SAVE YOUR CHANGES**!!
 
-
-**Step 3.** [Generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key).
-   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080`, `https://*.gitpod.io`, or `https://*.github.dev`). This allows Adyen.Web Dropin/Components to load on your page. The `*`-symbol indicates to accept any subdomain. If no origin is added, you'll get an invalid origin error.
-
-
-**Step 4.** Add the following values from step 1-3 to `ApplicationConfiguration.java` in `/main/java/com/adyen/workshop/configurations`:
-   - Best practice: export the variables. The Spring Boot framework can automatically inject your variables on startup by matching the attributed string-values in your `ApplicationConfiguration.java`. 
-Example: `@Value("${ADYEN_API_KEY:#{null}}")` would try to see if you there's a value for `ADYEN_API_KEY` and if it cannot find any, it will default to `null`.
-   - Open your terminal and execute the following command in your terminal:
+**Step 3.** Add the following values from steps 1 and 2 to the `ApplicationConfiguration.java` in `/main/java/com/adyen/workshop/configurations`:
+   - Best practice: `export` the variables in the terminal. The Spring Boot framework automatically injects your variables on startup by matching the attributed string-values in your `ApplicationConfiguration.java`.
+For example: `@Value("${ADYEN_API_KEY:#{null}}")` will check if the `ADYEN_API_KEY` is set, if not, it will default to `null`.
+   - Open the terminal and execute the following command in your terminal:
 ```bash
 export ADYEN_API_KEY='Aq42....xx'
 export ADYEN_CLIENT_KEY='test_yourclientkey'
-export ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountName'
+export ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountNameECOM'
 ```
-   - [Ignore this, unless you've used gitpod before], gitpod will inject previously used environment variables as configured in [https://gitpod.io/variables](https://gitpod.io/variables) when you start a new workspace. The injection **only** happens when the workspace is started. If you've changed variables in [https://gitpod.io/variables](https://gitpod.io/variables) during this, your changes will **not** be reflected immediately. You can 'sync' your variables, by running `eval $(gp env -e)` in your terminal. This will import the variables into your gitpod workspace.
-   - Alternatively, if you do not want to use the terminal, you can insert your keys in the `application.properties`-file`.
+
+   - [Ignore this, unless you've used gitpod before], Gitpod will inject previously used environment variables as configured in [https://gitpod.io/variables](https://gitpod.io/variables) when you start a new workspace. The injection **only** happens when the workspace is started. If you've changed variables in [https://gitpod.io/variables](https://gitpod.io/variables) during this, your changes will **not** be reflected immediately. You can 'sync' your variables, by running `eval $(gp env -e)` in your terminal. This will import the variables into your gitpod workspace.
+   - Alternatively, if you do not want to use the terminal, you can insert your keys in the `application.properties`-file` **(without the quotes!)**.
 ```
-ADYEN_API_KEY='Aq42....xx'
-ADYEN_CLIENT_KEY='test_yourclientkey'
-ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountName'
+ADYEN_API_KEY=Aq42....xx
+ADYEN_CLIENT_KEY=test_yourclientkey
+ADYEN_MERCHANT_ACCOUNT=YourMerchantAccountName
 ```
 
 
@@ -153,12 +150,13 @@ You can now access your keys in your application anywhere:
 
 *Note: We'll create the `HMAC Key` during the webhooks step, you can ignore this for now.*
 
-**Additional context:**
+**Step 4:** Use the API Key in your application by instantiating the Adyen.`Client`.
 
 In `/com/adyen/workshop/configurations/`, you'll find the `DependencyInjectionConfiguration.java` class. This is where we create our Adyen instances and **re-use** them using Spring's Constructor Dependency Injection (CDI) - A `@Bean` is an object that is instantiated, assembled, and managed by the Spring IoC container.
 You should be able to inject these classes similar to how we inject `ApplicationConfiguration.java` in any constructor.
 
-**Exercise:** Create your Adyen-`Client` by creating a `new Config()` object in `configurations/DependencyInjectionConfiguration.java`, passing your `ADYEN_API_KEY`, and specifying `Environment.TEST`, which we'll use later. This is what it would look like:
+**Exercise:** Create your Adyen.`Client` by creating a `new Config()` object in `configurations/DependencyInjectionConfiguration.java`, passing your `ADYEN_API_KEY`, and specifying `Environment.TEST`.
+This client is now configured to send secure API requests to Adyen. See code snippet below:
 
 ```java
 

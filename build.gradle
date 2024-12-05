@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-	// [Step 1] Add the Adyen Java library here
+	// [Step 5] Add the Adyen Java library here
 	implementation 'com.adyen:adyen-java-api-library:31.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
