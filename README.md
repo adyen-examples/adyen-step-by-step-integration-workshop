@@ -604,7 +604,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 
 </details>
 
-Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details`.
+Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to send a request to `/api/payments/details`.
 
 
 <details>
@@ -613,7 +613,6 @@ Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImpl
 We've added the `onAdditionalDetails(...)` function in the `configuration` object and modified the `handleResponse(response, component)` function to allow the component to handle the challenge, see `component.handleAction(response.action)`.
 Notice how we've only added **two extra things** here:
 * Added the `onAdditionalDetails(...)` event handler
-* Added the extra if-check in the `handleResponse(response, component)` function
 
 ```js
 // ...
@@ -673,7 +672,7 @@ async function startCheckout() {
                 handleResponse(error, component);
             },
             // Step 13 onAdditionalDetails(...) - Used for Native 3DS
-            onAdditionalDetails: async (state, component, actions)=> {
+            onAdditionalDetails: async (state, component)=> {
                 const response = await sendPostRequest("/api/payments/details", state.data);
                 handleResponse(response, component);
             }
@@ -689,25 +688,20 @@ async function startCheckout() {
 }
 
 function handleResponse(response, component) {
-    // [!] Step 13 - If there's an action, handle it, otherwise redirect the user to the correct page based on the resultCode.
-    if (response.action) {
-        component.handleAction(response.action);
-    } else {
-        switch (response.resultCode) {
-            case "Authorised":
-                window.location.href = "/result/success";
-                break;
-            case "Pending":
-            case "Received":
-                window.location.href = "/result/pending";
-                break;
-            case "Refused":
-                window.location.href = "/result/failed";
-                break;
-            default:
-                window.location.href = "/result/error";
-                break;
-        }
+    switch (response.resultCode) {
+        case "Authorised":
+            window.location.href = "/result/success";
+            break;
+        case "Pending":
+        case "Received":
+            window.location.href = "/result/pending";
+            break;
+        case "Refused":
+            window.location.href = "/result/failed";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
     }
 }
 
@@ -824,7 +818,7 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
 </details>
 
 
-**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/). You can (optionally) now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution/src).
+**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/). You can (optionally) now compare your solution to the solution in the [workshop/solution branch].
 
 
 If you want to go the extra mile, you can try enabling the following payment methods:

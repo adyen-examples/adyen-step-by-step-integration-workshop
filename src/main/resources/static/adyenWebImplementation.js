@@ -57,7 +57,7 @@ async function startCheckout() {
                 handleResponse(error, component);
             },
             // Step 13 onAdditionalDetails(...) - Used for Native 3DS
-            onAdditionalDetails: async (state, component, actions)=> {
+            onAdditionalDetails: async (state, component)=> {
                 const response = await sendPostRequest("/api/payments/details", state.data);
                 handleResponse(response, component);
             }
@@ -96,25 +96,20 @@ async function startCheckout() {
 
 // Step 10 - Handles responses, do a redirect based on result.
 function handleResponse(response, component) {
-    // Step 13 - If there's an action, handle it, otherwise redirect the user to the correct page based on the resultCode.
-    if (response.action) {
-        component.handleAction(response.action);
-    } else {
-        switch (response.resultCode) {
-            case "Authorised":
-                window.location.href = "/result/success";
-                break;
-            case "Pending":
-            case "Received":
-                window.location.href = "/result/pending";
-                break;
-            case "Refused":
-                window.location.href = "/result/failed";
-                break;
-            default:
-                window.location.href = "/result/error";
-                break;
-        }
+    switch (response.resultCode) {
+        case "Authorised":
+            window.location.href = "/result/success";
+            break;
+        case "Pending":
+        case "Received":
+            window.location.href = "/result/pending";
+            break;
+        case "Refused":
+            window.location.href = "/result/failed";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
     }
 }
 
