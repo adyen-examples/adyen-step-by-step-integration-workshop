@@ -42,28 +42,17 @@ The project structure follows a Model-View-Controller (MVC) structure. You can s
   ```
       @GetMapping("/hello-world")
       public ResponseEntity<String> helloWorld() throws Exception {
-          return ResponseEntity.ok()
-                  .body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
+          return ResponseEntity.ok().body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
       }
   ```
 
   * `/views`-folder contains view controllers that show the HTML pages in the `/resources/static/` folder
   * The code you need to update is in the `/controllers` folder. `ApiController.java`.
-  * You can add your environment variables (`ADYEN_API_KEY`, `ADYEN_MERCHANT_ACCOUNT`, `ADYEN_CLIENT_KEY`, `ADYEN_HMAC_KEY`) in the `ApplicationConfiguration.java` class.
+  * You can add your environment variables (`ADYEN_API_KEY`, `ADYEN_MERCHANT_ACCOUNT`, `ADYEN_CLIENT_KEY`, and `ADYEN_HMAC_KEY`) in the `application.properties`-file which gets picked up by the `ApplicationConfiguration.java` class.
 * The frontend templates are to be found in `src/main/resources/templates` and the static resources in `src/main/resources/static`
   * The code you need to update is in the `src/main/resources/static/adyenWebImplementation.js` and `src/main/resources/templates/layout.html`
 * Some additional information:
   * The `clientKey` in `adyenWebImplementation.js` is automatically passed from the backend to the client side and can be accessed using: `clientKey`.
-  * To experiment with multiple payment methods, a `type` value is passed from the client to the server. This value contains the name of an Adyen payment method that the Adyen web components will recognize. The value is currently hardcoded as `dropin`, see: `/preview?type=dropin` in `/resources/templates/index.html`.
-```
-<li class="integration-list-item">
-    <a href="/preview?type=dropin" class="integration-list-item-link">
-        <div class="title-container">
-            <p class="integration-list-item-title">Drop-in</p>
-        </div>
-    </a>
-</li>
-```
 
 * To run the project, you have two options:
   * `./gradlew bootRun` will start the server on port 8080.
@@ -115,7 +104,7 @@ A browser should open with the following screen: **"Workshop: Build Your Own Ady
 You'll notice that in `MainApplication.java`, we check if you've inserted your keys that are needed to securely communciate with Adyen platform. In the next 3 steps, we'll create these keys and start using them in our application.
 
 
-**Step 1.** [Create your Adyen Merchant Account](https://docs.adyen.com/account/manage-account-structure/#request-merchant-account) or use an existing Adyen Merchant Account associated with your account (ending with -`ECOM`). 
+**Step 1.** [Create your Adyen Merchant Account](https://docs.adyen.com/account/manage-account-structure/#request-merchant-account) or use an existing Adyen Merchant Account associated with your account (ending with -`ECOM`).
 
 **Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount `-ECOM` and created credentials in the API Credentials page in the Customer Area).
 **And** [generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key) on the same page as where you create your API Key.
@@ -170,10 +159,10 @@ public class DependencyInjectionConfiguration {
 
     @Bean
     Client client() {
+        // Step 4
         var config = new Config();
-        // Step 4.
         config.setApiKey(applicationConfiguration.getAdyenApiKey()); // We now use the Adyen API Key
-        config.setEnvironment(Environment.TEST);		     // Sets the environment to TEST
+        config.setEnvironment(Environment.TEST);		             // Sets the environment to TEST
         return new Client(config);
     }
 
@@ -214,17 +203,16 @@ We're now set up to do the `/paymentMethods`, `/payments` and `/payments/details
 <summary>Click here to show me the answer</summary>
 
 ```java
+    // Step 7
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        // Step 7
         var paymentMethodsRequest = new PaymentMethodsRequest();
         paymentMethodsRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
 
         log.info("Retrieving available Payment Methods from Adyen {}", paymentMethodsRequest);
         var response = paymentsApi.paymentMethods(paymentMethodsRequest);
         log.info("Payment Methods response from Adyen {}", response);
-        return ResponseEntity.ok()
-                .body(response);
+        return ResponseEntity.ok().body(response);
     }
 ```
 
@@ -243,7 +231,9 @@ We automatically pass on your public `ADYEN_CLIENT_KEY` to your frontend (see `c
 
 Create the configuration for the `AdyenCheckout`-instance, call the `/api/paymentMethods/`-endpoint, create the `AdyenCheckOut()`-instance, and mount it to `"payment"-div` container (see `/resources/templates/checkout.html`).
 
-We've added a `sendPostRequest(...)` helper function to communicate with your backend. You can copy and paste the following code below:
+To send a request we use the `fetch().then(response => response.json())`, this will send your requests to your backend.
+Let's start by copy and pasting the following code below in `adyenWebImplementation.js` to fetch the payment-methods from `/api/paymentMethods`.
+We then pass the data to the `AdyenCheckout` class to show it to the shopper.
 
 
 ```js
@@ -254,7 +244,12 @@ const { AdyenCheckout, Dropin } = window.AdyenWeb;
 async function startCheckout() {
     try {
         // Step 8 - Retrieve the available payment methods
-        let paymentMethodsResponse = await sendPostRequest("/api/paymentMethods");
+        const paymentMethodsResponse = await fetch("/api/paymentMethods", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(response => response.json());
 
         const configuration = {
             paymentMethodsResponse: paymentMethodsResponse,
@@ -270,7 +265,6 @@ async function startCheckout() {
             }
         };
 
-        // Optional configuration for cards
         const paymentMethodsConfiguration = {
             card: {
                 showBrandIcon: true,
@@ -293,42 +287,21 @@ async function startCheckout() {
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
         const adyenCheckout = await AdyenCheckout(configuration);
-        const dropin = new Dropin(adyenCheckout, {
-            paymentMethodsConfiguration: paymentMethodsConfiguration
-        }).mount(document.getElementById("payment"));
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
     }
 }
 
-
-function handleResponse(response, component) {
-  // We'll leave this empty for now and fix this in step 10.
-}
-
-// This function sends a POST request to your specified URL,
-// the `data`-parameters will be serialized as JSON in the body parameters.
-async function sendPostRequest(url, data) {
-    const res = await fetch(url, {
-        method: "POST",
-        body: data ? JSON.stringify(data) : "",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-
-    return await res.json();
-}
-
 startCheckout();
-
 
 ```
 
 
 Run your application to see whether the `Adyen Drop-in` is showing a list of payment methods. You'll notice that the Drop-in won't let you click `"Pay"` as we haven't implemented the `/payments` call yet.
-Here are some helpful notes if you do not see any payment methods show up on your website (`http://.../checkout?type=dropin`):
+
+Here are some helpful tips if you do not see any payment methods show up on your website (`http://.../checkout?type=dropin`):
 * **Empty response:** Have you configured any payment methods in the Customer Area?
 * **Invalid origin:** Have you added the correct origin URLs that allow your `Adyen Drop-in` to be loaded by the page?
 * **Unauthorized errors:** Have you specified your credentials correctly?
@@ -357,7 +330,7 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
         // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
-        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/api/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
+        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
 
         log.info("PaymentsRequest {}", paymentRequest);
         var response = paymentsApi.payments(paymentRequest);
@@ -370,14 +343,16 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
 
 
 
-**Step 10.** Let's send a request to our backend from our frontend, and modify `adyenWebImplementation.js` to override the `onSubmit(...)` function to send a request to the `/api/payments` endpoint.
+**Step 10.** Let's send a request to our backend, by modifying the `adyenWebImplementation.js`-file. We'll have to override the `onSubmit(...)` function to send a request to the `/api/payments` endpoint.
+We'll need to handle the [responses](https://docs.adyen.com/development-resources/overview-response-handling/#result-codes) accordingly.
 
 <details>
 <summary>Click to show me the answer</summary>
 
-We've added **two things** to the existing functionality here:
+We've added **three things** to the adyenWebImplementation.js:
 * the `onSubmit(...)` event handler
-* the `handleResponse(response, component)` function to handle the response (which is doing a simple redirect based on the response)
+* the `onPaymentCompleted(...)`, `onPaymentFailed(...)` and `onError(...)` event handlers
+* the `handleOnPaymentCompleted`/`handleOnPaymentFailed` function to handle the response (which is doing a simple redirect based on the response)
 
 
 ```js
@@ -385,7 +360,12 @@ We've added **two things** to the existing functionality here:
 async function startCheckout() {
     try {
         // ...
-        let paymentMethodsResponse = await sendPostRequest("/api/paymentMethods");
+        const paymentMethodsResponse = await fetch("/api/paymentMethods", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(response => response.json());
 
         const configuration = {
             paymentMethodsResponse: paymentMethodsResponse,
@@ -401,19 +381,26 @@ async function startCheckout() {
             },
             // Step 10 - Add the onSubmit handler by telling it what endpoint to call when the pay button is pressed.
             onSubmit: async (state, component, actions) => {
+                console.info("onSubmit", state, component, actions);
                 try {
                     if (state.isValid) {
-                        const { action, order, resultCode, donationToken } = await sendPostRequest("/api/payments", state.data);
+                        const { action, order, resultCode } = await fetch("/api/payments", {
+                            method: "POST",
+                            body: state.data ? JSON.stringify(state.data) : "",
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        }).then(response => response.json());
 
                         if (!resultCode) {
+                            console.warn("reject");
                             actions.reject();
                         }
 
                         actions.resolve({
                             resultCode,
                             action,
-                            order,
-                            donationToken
+                            order
                         });
                     }
                 } catch (error) {
@@ -422,19 +409,16 @@ async function startCheckout() {
                 }
             },
             onPaymentCompleted: (result, component) => {
-                console.info("onPaymentCompleted");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentCompleted", result, component);
+                handleOnPaymentCompleted(result, component);
             },
             onPaymentFailed: (result, component) => {
-                console.info("onPaymentFailed");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentFailed", result, component);
+                handleOnPaymentFailed(result, component);
             },
             onError: (error, component) => {
-                console.error("onError");
-                console.error(error.name, error.message, error.stack, component);
-                handleResponse(error, component);
+                console.error("onError", error.name, error.message, error.stack, component);
+                window.location.href = "/result/error";
             }
         };
 
@@ -461,17 +445,15 @@ async function startCheckout() {
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
         const adyenCheckout = await AdyenCheckout(configuration);
-        const dropin = new Dropin(adyenCheckout, {
-            paymentMethodsConfiguration: paymentMethodsConfiguration
-        }).mount(document.getElementById("payment"));
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
     }
 }
 
-// Step 10 - Handles responses, navigate to a specific URL based on the response.resultCode
-function handleResponse(response, component) {
+// Step 10 - Function to handle payment completion redirects
+function handleOnPaymentCompleted(response) {
     switch (response.resultCode) {
         case "Authorised":
             window.location.href = "/result/success";
@@ -480,6 +462,16 @@ function handleResponse(response, component) {
         case "Received":
             window.location.href = "/result/pending";
             break;
+        default:
+            window.location.href = "/result/error";
+            break;
+    }
+}
+
+// Step 10 - Function to handle payment failure redirects
+function handleOnPaymentFailed(response) {
+    switch (response.resultCode) {
+        case "Cancelled":
         case "Refused":
             window.location.href = "/result/failed";
             break;
@@ -489,20 +481,19 @@ function handleResponse(response, component) {
     }
 }
 
-// ...
+startCheckout();
 ```
 
 </details>
 
 
-**Step 11.** **Best practices:** The Adyen API supports idempotent requests, allowing you to retry a request multiple times while only performing the action once. This helps avoid unwanted duplication in case of failures and retries (e.g., you don't want to charge a shopper twice because they've hit the pay button two times, right?).
-Add the idempotency key to your payment request, see [documentation](https://docs.adyen.com/development-resources/api-idempotency/).
-
+**Step 11.** **Best practices:** The Adyen API supports idempotent requests, allowing you to retry a request multiple times while only performing the action once.
+This helps avoid unwanted duplication in case of failures and retries (e.g., you don't want to charge a shopper twice because they've hit the pay button two times, right?). To learn more about idempotency for payment requests, see [documentation](https://docs.adyen.com/development-resources/api-idempotency/).
 
 <details>
 <summary>Click to show me the answer</summary>
 
-You can add this to the existing code in the `/controllers/ApiController.java -> '/api/payments/'`-function
+You can add the idempotency key to the existing code in the `/controllers/ApiController.java -> '/api/payments/'`-function
 
 ```java
     // Step 11 - Add the idempotency key
@@ -522,13 +513,20 @@ You should now be able to make a payment, visit the [documentation/test-card-pag
 
 Congratulations! **However**, we're not there yet! This flow will fail when a challenge is presented to the shopper (Strong Customer Authentication). Let's handle this by adding 3D Secure 2 Authentication support.
 
-3D Secure 2 is an authentication protocol (3DS2) that provides an additional layer of verification for card-not-present (CNP) transactions. To trigger 3DS2, we'll need to add several parameters to the `PaymentRequest` in the `/api/payments` endpoint.
-Pick one of these two options.
+
+
+
+3D Secure 2 is an authentication protocol (3DS2) that provides an additional layer of verification for card-not-present (CNP) transactions.
+New to 3DS2? You can read our [docs](https://docs.adyen.com/online-payments/3d-secure/) or go to this [technical blog post](https://www.adyen.com/knowledge-hub/a-guide-to-integrating-with-adyen-web-for-3d-secure-2-payments) that will guide you through the why & whats.
+
+To trigger 3DS2, we'll need to add several parameters to the `PaymentRequest` in the `/api/payments` endpoint.
+Two options are available:
    * [Native](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web/): The card issuer performs the authentication within your website or mobile app using passive, biometric, and two-factor authentication approaches.
    * [Redirect](https://docs.adyen.com/online-payments/3d-secure/redirect-3ds2/web/): Shoppers are redirected to the card issuer's site to provide additional authentication data, for example, a password or an SMS verification code. The redirection might lead to lower conversion rates due to technical errors during the redirection or shoppers dropping out of the authentication process.
 
+In this workshop, we implement the **Redirect 3DS2 flow** first, in later steps (13 & 14) you can find out how to enable the Native 3DS2 flow.
 
-**Step 12.** Let's add 3DS2 to our `/payments`-request. Note: New to 3DS2? You can read our [docs](https://docs.adyen.com/online-payments/3d-secure/) or go to this [technical blog post](https://www.adyen.com/knowledge-hub/a-guide-to-integrating-with-adyen-web-for-3d-secure-2-payments) that will guide you through the why & whats.
+**Step 12.** Add the following fields to our `/payments`-request to enable 3DS2 Redirect:
 Go back to the `/controller/ApiController`, add the following parameters to your `PaymentRequest` for the redirect flow:
    * Origin
    * ShopperIP
@@ -543,7 +541,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 <details>
 <summary>Click to show me the answer</summary>
 
-**Note:** Do not blindly copy paste, we're **extending** the PaymentRequest by adding additional parameters.
+**Note:** We're **extending** the PaymentRequest by adding additional parameters. Be careful what you copy-paste! :)
 
 ```java
     @PostMapping("/api/payments")
@@ -557,7 +555,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
         authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
         paymentRequest.setAuthenticationData(authenticationData);
 
-        // Add these lines, if you like to enable the Native 3DS2 flow:
+        // Add the following lines, if you want to enable the Native 3DS2 flow:
         // Note: Visa requires additional properties to be sent in the request, see documentation for Native 3DS2: https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment
         //authenticationData.setThreeDSRequestData(new ThreeDSRequestData().nativeThreeDS(ThreeDSRequestData.NativeThreeDSEnum.PREFERRED));
         //paymentRequest.setAuthenticationData(authenticationData);
@@ -583,13 +581,14 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 </details>
 
 
-**Step 13.** Implement the `/payments/details` call in `/controllers/ApiController`.
+**Step 13.** If want to implement Native 3DS2, you'll have to implement the `/payments/details` call in `/controllers/ApiController`.
+Otherwise, skip this step and go to **step 14**.
 
 <details>
 <summary>Click to show me the answer</summary>
 
 ```java
-    // Step 13 - Handle details call (triggered after Native 3DS2 flow)
+    // Step 13 - Handle details call (triggered after the Native 3DS2 flow, called from the frontend in step 14)
     @PostMapping("/api/payments/details")
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException
     {
@@ -602,24 +601,25 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 
 </details>
 
-Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details`.
+On the frontend, we'll need to override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details` to finalize the payment, after the Native 3DS2 authentication.
 
 
 <details>
-<summary>Click to show me the answer </summary>
-
-We've added the `onAdditionalDetails(...)` function in the `configuration` object and modified the `handleResponse(response, component)` function to allow the component to handle the challenge, see `component.handleAction(response.action)`.
-Notice how we've only added **two extra things** here:
-* Added the `onAdditionalDetails(...)` event handler
-* Added the extra if-check in the `handleResponse(response, component)` function
+<summary>Click to show me the answer</summary>
+We've added the `onAdditionalDetails(...)` function in the `configuration` object to resolve correctly.
 
 ```js
-// ...
 
+// ...
 async function startCheckout() {
     try {
         // ...
-        let paymentMethodsResponse = await sendPostRequest("/api/paymentMethods");
+        const paymentMethodsResponse = await fetch("/api/paymentMethods", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(response => response.json());
 
         const configuration = {
             paymentMethodsResponse: paymentMethodsResponse,
@@ -656,72 +656,111 @@ async function startCheckout() {
                 }
             },
             onPaymentCompleted: (result, component) => {
-                console.info("onPaymentCompleted");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentCompleted", result, component);
+                handleOnPaymentCompleted(result, component);
             },
             onPaymentFailed: (result, component) => {
-                console.info("onPaymentFailed");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentFailed", result, component);
+                handleOnPaymentFailed(result, component);
             },
             onError: (error, component) => {
-                console.error("onError");
-                console.error(error.name, error.message, error.stack, component);
-                handleResponse(error, component);
+                console.error("onError", error.name, error.message, error.stack, component);
+                window.location.href = "/result/error";
             },
-            // Step 13 onAdditionalDetails(...) - Used for Native 3DS
-            onAdditionalDetails: async (state, component, actions)=> {
-                const response = await sendPostRequest("/api/payments/details", state.data);
-                handleResponse(response, component);
+            // Step 13 onAdditionalDetails(...) - Use this to finalize the Native 3DS2 authentication.
+            onAdditionalDetails: async (state, component, actions) => {
+                console.info("onAdditionalDetails", state, component);
+                try {
+                    const { resultCode } = await fetch("/api/payments/details", {
+                        method: "POST",
+                        body: state.data ? JSON.stringify(state.data) : "",
+                        headers: {
+                            "Content-Type": "application/json",
+                        }
+                    }).then(response => response.json());
+
+                    if (!resultCode) {
+                        console.warn("reject");
+                        actions.reject();
+                    }
+
+                    actions.resolve({ resultCode });
+                } catch (error) {
+                    console.error(error);
+                    actions.reject();
+                }
+            }
+        };
+
+        // Optional configuration for cards
+        const paymentMethodsConfiguration = {
+            card: {
+                showBrandIcon: true,
+                hasHolderName: true,
+                holderNameRequired: true,
+                name: "Credit or debit card",
+                amount: {
+                    value: 9998,
+                    currency: "EUR",
+                },
+                placeholders: {
+                    cardNumber: '1234 5678 9012 3456',
+                    expiryDate: 'MM/YY',
+                    securityCodeThreeDigits: '123',
+                    securityCodeFourDigits: '1234',
+                    holderName: 'Developer Relations Team'
+                }
             }
         };
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
-        let adyenCheckout = await new AdyenCheckout(configuration);
-        adyenCheckout.create(type).mount(document.getElementById("payment"));
+        const adyenCheckout = await AdyenCheckout(configuration);
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
     }
 }
 
-function handleResponse(response, component) {
-    // [!] Step 13 - If there's an action, handle it, otherwise redirect the user to the correct page based on the resultCode.
-    if (response.action) {
-        component.handleAction(response.action);
-    } else {
-        switch (response.resultCode) {
-            case "Authorised":
-                window.location.href = "/result/success";
-                break;
-            case "Pending":
-            case "Received":
-                window.location.href = "/result/pending";
-                break;
-            case "Refused":
-                window.location.href = "/result/failed";
-                break;
-            default:
-                window.location.href = "/result/error";
-                break;
-        }
+function handleOnPaymentCompleted(response) {
+    switch (response.resultCode) {
+        case "Authorised":
+            window.location.href = "/result/success";
+            break;
+        case "Pending":
+        case "Received":
+            window.location.href = "/result/pending";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
     }
 }
 
-// ...
-```
+function handleOnPaymentFailed(response) {
+    switch (response.resultCode) {
+        case "Cancelled":
+        case "Refused":
+            window.location.href = "/result/failed";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
+    }
+}
 
+startCheckout();
+
+```
 </details>
 
 
 **Step 14.** Let's handle 3DS2 in our `/payments/details`-request by passing the `redirectResult` or `payload` in the `/payments/details`-call.
-Add the following function the `controllers/ApiController.java` class.
+Add the following function the `controllers/ApiController.java` class. Shoppers will be redirected to this new route after they completed their 3DS2 authentication.
 
 ```java
-
 // Step 14 - Handle Redirect 3DS2 during payment.
-@GetMapping("/api/handleShopperRedirect")
+@GetMapping("/handleShopperRedirect")
 public RedirectView redirect(@RequestParam(required = false) String payload, @RequestParam(required = false) String redirectResult) throws IOException, ApiException {
     var paymentDetailsRequest = new PaymentDetailsRequest();
 
@@ -786,6 +825,7 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
 ```java
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
+        log.info("Received: {}", json);
         var notificationRequest = NotificationRequest.fromJson(json);
         var notificationRequestItem = notificationRequest.getNotificationItems().stream().findFirst();
 
@@ -799,15 +839,7 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
             }
 
             // Success, log it for now
-            log.info("""
-                            Received webhook with event {} :\s
-                            Merchant Reference: {}
-                            Alias : {}
-                            PSP reference : {}""",
-                    item.getEventCode(),
-                    item.getMerchantReference(),
-                    item.getAdditionalData().get("alias"),
-                    item.getPspReference());
+            log.info("Received webhook with event {}", item.toString());
 
             return ResponseEntity.accepted().build();
         } catch (SignatureException e) {
@@ -822,7 +854,8 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
 </details>
 
 
-**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/). You can (optionally) now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution/src).
+**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/).
+You can (optionally) now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution-v6-dropin).
 
 
 If you want to go the extra mile, you can try enabling the following payment methods:
@@ -834,7 +867,7 @@ If you want to go the extra mile, you can try enabling the following payment met
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
    - Do not forget to add `LineItems` to your payment-request
 
-Well done! :)
+Well done! You can now understand and explore the other [integration-examples on Github/adyen-examples](https://github.com/adyen-examples/).
 
 ## Contacting us
 
