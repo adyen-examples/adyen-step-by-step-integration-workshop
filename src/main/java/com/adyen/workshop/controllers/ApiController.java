@@ -44,14 +44,14 @@ public class ApiController {
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
 
-        return ResponseEntity.ok().body("");
+        return ResponseEntity.ok().body(null);
     }
 
     // Step 9 - Implement the /payments call to Adyen.
     @PostMapping("/api/payments")
     public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
 
-        return ResponseEntity.ok().body("");
+        return ResponseEntity.ok().body(null);
     }
 
     // Step 13 - Handle details call (triggered after Native 3DS2 flow)
@@ -59,7 +59,7 @@ public class ApiController {
     public ResponseEntity<PaymentDetailsResponse> paymentsDetails(@RequestBody PaymentDetailsRequest detailsRequest) throws IOException, ApiException
     {
 
-        return ResponseEntity.ok().body("");
+        return ResponseEntity.ok().body(null);
     }
 
     // Step 14 - Handle Redirect 3DS2 during payment.
