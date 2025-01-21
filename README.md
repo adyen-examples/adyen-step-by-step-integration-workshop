@@ -114,7 +114,7 @@ A browser should open with the following screen: **"Workshop: Build Your Own Ady
 You'll notice that in `MainApplication.java`, we check if you've inserted your keys that are needed to securely communciate with Adyen platform. In the next 3 steps, we'll create these keys and start using them in our application.
 
 
-**Step 1.** [Create your Adyen Merchant Account](https://docs.adyen.com/account/manage-account-structure/#request-merchant-account) or use an existing Adyen Merchant Account associated with your account (ending with -`ECOM`). 
+**Step 1.** [Create your Adyen Merchant Account](https://docs.adyen.com/account/manage-account-structure/#request-merchant-account) or use an existing Adyen Merchant Account associated with your account (ending with -`ECOM`).
 
 **Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount `-ECOM` and created credentials in the API Credentials page in the Customer Area).
 **And** [generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key) on the same page as where you create your API Key.
@@ -607,12 +607,12 @@ Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImpl
 
 
 <details>
-<summary>Click to show me the answer </summary>
+<summary>Click to show me the answer</summary>
 We've added the `onAdditionalDetails(...)` function in the `configuration` object to resolve correctly.
 
 ```js
-// ...
 
+// ...
 async function startCheckout() {
     try {
         // ...
@@ -723,9 +723,8 @@ async function startCheckout() {
         alert("Error occurred. Look at console for details.");
     }
 }
-
 // ...
-
+```
 </details>
 
 
@@ -733,7 +732,6 @@ async function startCheckout() {
 Add the following function the `controllers/ApiController.java` class. Shoppers will be redirected to this new route after they completed their 3DS2 authentication.
 
 ```java
-
 // Step 14 - Handle Redirect 3DS2 during payment.
 @GetMapping("/handleShopperRedirect")
 public RedirectView redirect(@RequestParam(required = false) String payload, @RequestParam(required = false) String redirectResult) throws IOException, ApiException {
