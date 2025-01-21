@@ -14,6 +14,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -91,8 +94,38 @@ public class ApiController {
         // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
         paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect"); // Example: Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
 
+        // Step 19 (optional) - shopperEmail, shopperReference, lineItems is required for klarna
+        LineItem lineItem1 = new LineItem()
+                .quantity(1L)
+                .taxPercentage(2100L)
+                .amountIncludingTax(4999L)
+                .imageUrl("https://adyen.com")
+                .description("The best sunglasses")
+                .id("uniqueId-1")
+                .productUrl("https://adyen.com");
+
+        LineItem lineItem2 = new LineItem()
+                .quantity(1L)
+                .taxPercentage(2100L)
+                .amountIncludingTax(4999L)
+                .imageUrl("https://adyen.com")
+                .description("The best headphones")
+                .id("uniqueId-2")
+                .productUrl("https://adyen.com");
+
+        paymentRequest.setCountryCode("NL");
+        paymentRequest.setShopperReference("shopperReference");
+        paymentRequest.setShopperEmail("example@email.com");
+        paymentRequest.setLineItems(Arrays.asList(lineItem1, lineItem2));
+
+
+        
+        // Step 11 - Add the idempotency key
+        var requestOptions = new RequestOptions();
+        requestOptions.setIdempotencyKey(UUID.randomUUID().toString());
+
         log.info("PaymentsRequest {}", paymentRequest);
-        var response = paymentsApi.payments(paymentRequest);
+        var response = paymentsApi.payments(paymentRequest, requestOptions); // Notice how we're adding this property to our existing code*
         log.info("PaymentsResponse {}", response);
         return ResponseEntity.ok().body(response);
     }
