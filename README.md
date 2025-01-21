@@ -544,7 +544,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 <details>
 <summary>Click to show me the answer</summary>
 
-**Note:** Do not blindly copy paste, we're **extending** the PaymentRequest by adding additional parameters.
+**Note:** We're **extending** the PaymentRequest by adding additional parameters. Be careful what you copy-paste! :)
 
 ```java
     @PostMapping("/api/payments")
@@ -584,7 +584,8 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 </details>
 
 
-**Step 13.** If you're implementing native 3DS2, implement the `/payments/details` call in `/controllers/ApiController`.
+**Step 13.** If want to implement Native 3DS2, you'll have to implement the `/payments/details` call in `/controllers/ApiController`.
+Otherwise, skip this step and go to **step 14**.
 
 <details>
 <summary>Click to show me the answer</summary>
@@ -603,7 +604,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 
 </details>
 
-Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details` to finalize the payment, after the Native 3DS2 authentication.
+On the frontend, we'll need to override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details` to finalize the payment, after the Native 3DS2 authentication.
 
 
 <details>
