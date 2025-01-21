@@ -20,6 +20,7 @@ public class DependencyInjectionConfiguration {
     Client client() {
         // Step 4
         var config = new Config();
+
         return new Client(config);
     }
 
