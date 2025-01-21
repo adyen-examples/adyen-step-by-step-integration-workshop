@@ -5,7 +5,12 @@ const { AdyenCheckout, Dropin } = window.AdyenWeb;
 async function startCheckout() {
     try {
         // Step 8 - Retrieve the available payment methods
-        let paymentMethodsResponse = await sendPostRequest("/api/paymentMethods");
+        const paymentMethodsResponse = await fetch("/api/paymentMethods", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(response => response.json());
 
         const configuration = {
             paymentMethodsResponse: paymentMethodsResponse,
@@ -21,19 +26,26 @@ async function startCheckout() {
             },
             // Step 10 - Add the onSubmit handler by telling it what endpoint to call when the pay button is pressed.
             onSubmit: async (state, component, actions) => {
+                console.info("onSubmit", state, component, actions);
                 try {
                     if (state.isValid) {
-                        const { action, order, resultCode, donationToken } = await sendPostRequest("/api/payments", state.data);
+                        const { action, order, resultCode } = await fetch("/api/payments", {
+                            method: "POST",
+                            body: state.data ? JSON.stringify(state.data) : "",
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        }).then(response => response.json());
 
                         if (!resultCode) {
+                            console.warn("reject");
                             actions.reject();
                         }
 
                         actions.resolve({
                             resultCode,
                             action,
-                            order,
-                            donationToken
+                            order
                         });
                     }
                 } catch (error) {
@@ -42,24 +54,39 @@ async function startCheckout() {
                 }
             },
             onPaymentCompleted: (result, component) => {
-                console.info("onPaymentCompleted");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentCompleted", result, component);
+                handleOnPaymentCompleted(result, component);
             },
             onPaymentFailed: (result, component) => {
-                console.info("onPaymentFailed");
-                console.info(result, component);
-                handleResponse(result, component);
+                console.info("onPaymentFailed", result, component);
+                handleOnPaymentFailed(result, component);
             },
             onError: (error, component) => {
-                console.error("onError");
-                console.error(error.name, error.message, error.stack, component);
-                handleResponse(error, component);
+                console.error("onError", error.name, error.message, error.stack, component);
+                window.location.href = "/result/error";
             },
-            // Step 13 onAdditionalDetails(...) - Used for Native 3DS
-            onAdditionalDetails: async (state, component)=> {
-                const response = await sendPostRequest("/api/payments/details", state.data);
-                handleResponse(response, component);
+            // Step 13 onAdditionalDetails(...) - Use this to finalize the payment, after Native 3DS2 authentication.
+            onAdditionalDetails: async (state, component, actions) => {
+                console.info("onAdditionalDetails", state, component);
+                try {
+                    const { resultCode } = await fetch("/api/payments/details", {
+                        method: "POST",
+                        body: state.data ? JSON.stringify(state.data) : "",
+                        headers: {
+                            "Content-Type": "application/json",
+                        }
+                    }).then(response => response.json());
+
+                    if (!resultCode) {
+                        console.warn("reject");
+                        actions.reject();
+                    }
+
+                    actions.resolve({ resultCode });
+                } catch (error) {
+                    console.error(error);
+                    actions.reject();
+                }
             }
         };
 
@@ -94,8 +121,8 @@ async function startCheckout() {
     }
 }
 
-// Step 10 - Handles responses, do a redirect based on result.
-function handleResponse(response, component) {
+// Step 10 - Function to handle payment completion redirects
+function handleOnPaymentCompleted(response) {
     switch (response.resultCode) {
         case "Authorised":
             window.location.href = "/result/success";
@@ -104,6 +131,16 @@ function handleResponse(response, component) {
         case "Received":
             window.location.href = "/result/pending";
             break;
+        default:
+            window.location.href = "/result/error";
+            break;
+    }
+}
+
+// Step 10 - Function to handle payment failure redirects
+function handleOnPaymentFailed(response) {
+    switch (response.resultCode) {
+        case "Cancelled":
         case "Refused":
             window.location.href = "/result/failed";
             break;
@@ -111,20 +148,6 @@ function handleResponse(response, component) {
             window.location.href = "/result/error";
             break;
     }
-}
-
-// This function sends a POST request to your specified URL,
-// the `data`-parameters will be serialized as JSON in the body parameters.
-async function sendPostRequest(url, data) {
-    const res = await fetch(url, {
-        method: "POST",
-        body: data ? JSON.stringify(data) : "",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-
-    return await res.json();
 }
 
 startCheckout();
