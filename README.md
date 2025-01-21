@@ -48,21 +48,11 @@ The project structure follows a Model-View-Controller (MVC) structure. You can s
 
   * `/views`-folder contains view controllers that show the HTML pages in the `/resources/static/` folder
   * The code you need to update is in the `/controllers` folder. `ApiController.java`.
-  * You can add your environment variables (`ADYEN_API_KEY`, `ADYEN_MERCHANT_ACCOUNT`, `ADYEN_CLIENT_KEY`, `ADYEN_HMAC_KEY`) in the `ApplicationConfiguration.java` class.
+  * You can add your environment variables (`ADYEN_API_KEY`, `ADYEN_MERCHANT_ACCOUNT`, `ADYEN_CLIENT_KEY`, and `ADYEN_HMAC_KEY`) in the `application.properties`-file which gets picked up by the `ApplicationConfiguration.java` class.
 * The frontend templates are to be found in `src/main/resources/templates` and the static resources in `src/main/resources/static`
   * The code you need to update is in the `src/main/resources/static/adyenWebImplementation.js` and `src/main/resources/templates/layout.html`
 * Some additional information:
   * The `clientKey` in `adyenWebImplementation.js` is automatically passed from the backend to the client side and can be accessed using: `clientKey`.
-  * To experiment with multiple payment methods, a `type` value is passed from the client to the server. This value contains the name of an Adyen payment method that the Adyen web components will recognize. The value is currently hardcoded as `dropin`, see: `/preview?type=dropin` in `/resources/templates/index.html`.
-```
-<li class="integration-list-item">
-    <a href="/preview?type=dropin" class="integration-list-item-link">
-        <div class="title-container">
-            <p class="integration-list-item-title">Drop-in</p>
-        </div>
-    </a>
-</li>
-```
 
 * To run the project, you have two options:
   * `./gradlew bootRun` will start the server on port 8080.
@@ -241,7 +231,9 @@ We automatically pass on your public `ADYEN_CLIENT_KEY` to your frontend (see `c
 
 Create the configuration for the `AdyenCheckout`-instance, call the `/api/paymentMethods/`-endpoint, create the `AdyenCheckOut()`-instance, and mount it to `"payment"-div` container (see `/resources/templates/checkout.html`).
 
-We've added a `sendPostRequest(...)` helper function to communicate with your backend. You can copy and paste the following code below:
+To send a request we use the `fetch().then(response => response.json())`, this will send your requests to your backend.
+Let's start by copy and pasting the following code below in `adyenWebImplementation.js` to fetch the payment-methods from `/api/paymentMethods`.
+We then pass the data to the `AdyenCheckout` class to show it to the shopper.
 
 
 ```js
@@ -302,11 +294,14 @@ async function startCheckout() {
     }
 }
 
+startCheckout();
+
 ```
 
 
 Run your application to see whether the `Adyen Drop-in` is showing a list of payment methods. You'll notice that the Drop-in won't let you click `"Pay"` as we haven't implemented the `/payments` call yet.
-Here are some helpful notes if you do not see any payment methods show up on your website (`http://.../checkout?type=dropin`):
+
+Here are some helpful tips if you do not see any payment methods show up on your website (`http://.../checkout?type=dropin`):
 * **Empty response:** Have you configured any payment methods in the Customer Area?
 * **Invalid origin:** Have you added the correct origin URLs that allow your `Adyen Drop-in` to be loaded by the page?
 * **Unauthorized errors:** Have you specified your credentials correctly?
@@ -348,13 +343,15 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
 
 
 
-**Step 10.** Let's send a request to our backend from our frontend, and modify `adyenWebImplementation.js` to override the `onSubmit(...)` function to send a request to the `/api/payments` endpoint.
+**Step 10.** Let's send a request to our backend, by modifying the `adyenWebImplementation.js`-file. We'll have to override the `onSubmit(...)` function to send a request to the `/api/payments` endpoint.
+We'll need to handle the [responses](https://docs.adyen.com/development-resources/overview-response-handling/#result-codes) accordingly.
 
 <details>
 <summary>Click to show me the answer</summary>
 
-We've added **two things** to the existing functionality here:
+We've added **three things** to the adyenWebImplementation.js:
 * the `onSubmit(...)` event handler
+* the `onPaymentCompleted(...)`, `onPaymentFailed(...)` and `onError(...)` event handlers
 * the `handleOnPaymentCompleted`/`handleOnPaymentFailed` function to handle the response (which is doing a simple redirect based on the response)
 
 
@@ -724,7 +721,36 @@ async function startCheckout() {
         alert("Error occurred. Look at console for details.");
     }
 }
-// ...
+
+function handleOnPaymentCompleted(response) {
+    switch (response.resultCode) {
+        case "Authorised":
+            window.location.href = "/result/success";
+            break;
+        case "Pending":
+        case "Received":
+            window.location.href = "/result/pending";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
+    }
+}
+
+function handleOnPaymentFailed(response) {
+    switch (response.resultCode) {
+        case "Cancelled":
+        case "Refused":
+            window.location.href = "/result/failed";
+            break;
+        default:
+            window.location.href = "/result/error";
+            break;
+    }
+}
+
+startCheckout();
+
 ```
 </details>
 
@@ -828,7 +854,8 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
 </details>
 
 
-**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/). You can (optionally) now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution/src).
+**Step 17.** Congratulations, you've successfully built an integration with Adyen! You can now add support for different [payment methods](https://docs.adyen.com/payment-methods/).
+You can (optionally) now compare your solution to the solution in the [workshop/solution branch](https://github.com/adyen-examples/adyen-step-by-step-integration-workshop/tree/workshop/solution-v6-dropin).
 
 
 If you want to go the extra mile, you can try enabling the following payment methods:
@@ -840,7 +867,7 @@ If you want to go the extra mile, you can try enabling the following payment met
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
    - Do not forget to add `LineItems` to your payment-request
 
-Well done! :)
+Well done! You can now understand and explore the other [integration-examples on Github/adyen-examples](https://github.com/adyen-examples/).
 
 ## Contacting us
 
