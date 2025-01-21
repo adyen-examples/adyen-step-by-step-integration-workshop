@@ -169,7 +169,7 @@ public class DependencyInjectionConfiguration {
 
     @Bean
     Client client() {
-        // Step 4.
+        // Step 4
         var config = new Config();
         config.setApiKey(applicationConfiguration.getAdyenApiKey()); // We now use the Adyen API Key
         config.setEnvironment(Environment.TEST);		             // Sets the environment to TEST
@@ -335,7 +335,7 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
         // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
-        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
+        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
 
         log.info("PaymentsRequest {}", paymentRequest);
         var response = paymentsApi.payments(paymentRequest);
@@ -608,7 +608,6 @@ Next up, let's override the `onAdditionalDetails(...)` function in `adyenWebImpl
 
 <details>
 <summary>Click to show me the answer </summary>
-
 We've added the `onAdditionalDetails(...)` function in the `configuration` object to resolve correctly.
 
 ```js
