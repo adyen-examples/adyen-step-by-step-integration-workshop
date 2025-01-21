@@ -42,8 +42,7 @@ The project structure follows a Model-View-Controller (MVC) structure. You can s
   ```
       @GetMapping("/hello-world")
       public ResponseEntity<String> helloWorld() throws Exception {
-          return ResponseEntity.ok()
-                  .body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
+          return ResponseEntity.ok().body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
       }
   ```
 
@@ -170,8 +169,8 @@ public class DependencyInjectionConfiguration {
 
     @Bean
     Client client() {
-        var config = new Config();
         // Step 4.
+        var config = new Config();
         config.setApiKey(applicationConfiguration.getAdyenApiKey()); // We now use the Adyen API Key
         config.setEnvironment(Environment.TEST);		             // Sets the environment to TEST
         return new Client(config);
@@ -214,17 +213,16 @@ We're now set up to do the `/paymentMethods`, `/payments` and `/payments/details
 <summary>Click here to show me the answer</summary>
 
 ```java
+    // Step 7
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        // Step 7
         var paymentMethodsRequest = new PaymentMethodsRequest();
         paymentMethodsRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
 
         log.info("Retrieving available Payment Methods from Adyen {}", paymentMethodsRequest);
         var response = paymentsApi.paymentMethods(paymentMethodsRequest);
         log.info("Payment Methods response from Adyen {}", response);
-        return ResponseEntity.ok()
-                .body(response);
+        return ResponseEntity.ok().body(response);
     }
 ```
 
@@ -297,9 +295,7 @@ async function startCheckout() {
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
         const adyenCheckout = await AdyenCheckout(configuration);
-        const dropin = new Dropin(adyenCheckout, {
-            paymentMethodsConfiguration: paymentMethodsConfiguration
-        }).mount(document.getElementById("payment"));
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
@@ -452,9 +448,7 @@ async function startCheckout() {
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
         const adyenCheckout = await AdyenCheckout(configuration);
-        const dropin = new Dropin(adyenCheckout, {
-            paymentMethodsConfiguration: paymentMethodsConfiguration
-        }).mount(document.getElementById("payment"));
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
@@ -724,9 +718,7 @@ async function startCheckout() {
 
         // Start the AdyenCheckout and mount the element onto the `payment`-div.
         const adyenCheckout = await AdyenCheckout(configuration);
-        const dropin = new Dropin(adyenCheckout, {
-            paymentMethodsConfiguration: paymentMethodsConfiguration
-        }).mount(document.getElementById("payment"));
+        const dropin = new Dropin(adyenCheckout, { paymentMethodsConfiguration: paymentMethodsConfiguration }).mount(document.getElementById("payment"));
     } catch (error) {
         console.error(error);
         alert("Error occurred. Look at console for details.");
@@ -823,7 +815,7 @@ You can receive webhooks by enabling webhooks in the Customer Area, followed by 
             }
 
             // Success, log it for now
-            log.info("Received webhook with event {}", item.toJson());
+            log.info("Received webhook with event {}", item.toString());
 
             return ResponseEntity.accepted().build();
         } catch (SignatureException e) {

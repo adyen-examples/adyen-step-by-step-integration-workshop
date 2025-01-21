@@ -51,7 +51,7 @@ public class WebhookController {
             }
 
             // Success, log it for now
-            log.info("Received webhook with event {}", item.toJson());
+            log.info("Received webhook with event {}", item.toString());
 
             return ResponseEntity.accepted().build();
         } catch (SignatureException e) {

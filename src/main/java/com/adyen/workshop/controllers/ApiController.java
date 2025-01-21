@@ -6,7 +6,6 @@ import com.adyen.workshop.configurations.ApplicationConfiguration;
 import com.adyen.service.checkout.PaymentsApi;
 import com.adyen.service.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -32,17 +31,22 @@ public class ApiController {
         this.paymentsApi = paymentsApi;
     }
 
+    // Step 0
     @GetMapping("/hello-world")
     public ResponseEntity<String> helloWorld() throws Exception {
-        // Step 0
-        return ResponseEntity.ok()
-                .body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
+        return ResponseEntity.ok().body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
     }
 
+    // Step 7
     @PostMapping("/api/paymentMethods")
     public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
-        // Step 7
-        return null;
+        var paymentMethodsRequest = new PaymentMethodsRequest();
+        paymentMethodsRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
+
+        log.info("Retrieving available Payment Methods from Adyen {}", paymentMethodsRequest);
+        var response = paymentsApi.paymentMethods(paymentMethodsRequest);
+        log.info("Payment Methods response from Adyen {}", response);
+        return ResponseEntity.ok().body(response);
     }
 
     // Step 9 - Implement the /payments call to Adyen.
@@ -85,7 +89,7 @@ public class ApiController {
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
         // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
-        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
+        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect"); // Example: Turns into http://localhost:8080/api/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
 
         log.info("PaymentsRequest {}", paymentRequest);
         var response = paymentsApi.payments(paymentRequest);
