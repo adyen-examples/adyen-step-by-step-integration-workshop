@@ -635,19 +635,26 @@ async function startCheckout() {
             },
             // Step 10 - Add the onSubmit handler by telling it what endpoint to call when the pay button is pressed.
             onSubmit: async (state, component, actions) => {
+                console.info("onSubmit", state, component, actions);
                 try {
                     if (state.isValid) {
-                        const { action, order, resultCode, donationToken } = await sendPostRequest("/api/payments", state.data);
+                        const { action, order, resultCode } = await fetch("/api/payments", {
+                            method: "POST",
+                            body: state.data ? JSON.stringify(state.data) : "",
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        }).then(response => response.json());
 
                         if (!resultCode) {
+                            console.warn("reject");
                             actions.reject();
                         }
 
                         actions.resolve({
                             resultCode,
                             action,
-                            order,
-                            donationToken
+                            order
                         });
                     }
                 } catch (error) {
