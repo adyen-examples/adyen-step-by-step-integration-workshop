@@ -805,9 +805,9 @@ public RedirectView redirect(@RequestParam(required = false) String payload, @Re
 
 
 
-**Step 15.** Let's test this flow by making a payment using a special card number that always trigger 3DS2. You can find more test card numbers on [Adyen docs](https://docs.adyen.com/development-resources/testing/test-card-numbers/).
+**Step 15.** Let's test this flow by making a payment using a special card number that always trigger 3DS. You can find more test card numbers on [Adyen docs](https://docs.adyen.com/development-resources/testing/test-card-numbers/).
 
-**Note:** For Cards, use the following Visa Test Card number, to trigger a 3DS2 flow. You can also download the official [Adyen Test Card Extension](https://chromewebstore.google.com/detail/adyen-test-cards/icllkfleeahmemjgoibajcmeoehkeoag) to prefill your card numbers.
+**Note:** You can also download the official [Adyen Test Card Extension](https://chromewebstore.google.com/detail/adyen-test-cards/icllkfleeahmemjgoibajcmeoehkeoag) to prefill your card numbers.
 
 
 
