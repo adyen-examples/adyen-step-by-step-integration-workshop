@@ -514,8 +514,6 @@ You should now be able to make a payment, visit the [documentation/test-card-pag
 Congratulations! **However**, we're not there yet! This flow will fail when a challenge is presented to the shopper (Strong Customer Authentication). Let's handle this by adding 3D Secure 2 Authentication support.
 
 
-
-
 3D Secure 2 is an authentication protocol (3DS2) that provides an additional layer of verification for card-not-present (CNP) transactions.
 New to 3DS2? You can read our [docs](https://docs.adyen.com/online-payments/3d-secure/) or go to this [technical blog post](https://www.adyen.com/knowledge-hub/a-guide-to-integrating-with-adyen-web-for-3d-secure-2-payments) that will guide you through the why & whats.
 
@@ -524,18 +522,17 @@ Two options are available:
    * [Native](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web/): The card issuer performs the authentication within your website or mobile app using passive, biometric, and two-factor authentication approaches.
    * [Redirect](https://docs.adyen.com/online-payments/3d-secure/redirect-3ds2/web/): Shoppers are redirected to the card issuer's site to provide additional authentication data, for example, a password or an SMS verification code. The redirection might lead to lower conversion rates due to technical errors during the redirection or shoppers dropping out of the authentication process.
 
-In this workshop, we implement the **Redirect 3DS2 flow** first, in later steps (13 & 14) you can find out how to enable the Native 3DS2 flow.
+In this workshop, we implement the **Redirect 3DS2 flow**. Check out Step 13 to enable the Native 3DS2 flow.
 
-**Step 12.** Add the following fields to our `/payments`-request to enable 3DS2 Redirect:
-Go back to the `/controller/ApiController`, add the following parameters to your `PaymentRequest` for the redirect flow:
+**Step 12.** 
+Go back to the `/controller/ApiController`, add the following fields to the `PaymentRequest` to our `/payments`-request to enable 3DS2 Redirect:
    * Origin
    * ShopperIP
    * ShopperInteraction
    * BrowserInfo
    * BillingAddress (due to risk rules, we recommend including the `BillingAddress`, even though it's optional).
 
-**Note:** In this example, we implement the Redirect 3DS2 flow. You can also opt-in to implement the [Native 3DS2 flow](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment), which we've also included (commented-out*) in the answer below.
-
+**Note:** In this example, we implement the Redirect 3DS2 flow. You can also opt-in to implement the [Native 3DS2 flow](https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment) by optionally following Step 13.
 
 
 <details>
@@ -554,11 +551,6 @@ Go back to the `/controller/ApiController`, add the following parameters to your
         var authenticationData = new AuthenticationData();
         authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
         paymentRequest.setAuthenticationData(authenticationData);
-
-        // Add the following lines, if you want to enable the Native 3DS2 flow:
-        // Note: Visa requires additional properties to be sent in the request, see documentation for Native 3DS2: https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment
-        //authenticationData.setThreeDSRequestData(new ThreeDSRequestData().nativeThreeDS(ThreeDSRequestData.NativeThreeDSEnum.PREFERRED));
-        //paymentRequest.setAuthenticationData(authenticationData);
 
         paymentRequest.setOrigin(request.getScheme() + "://" + host);
         paymentRequest.setBrowserInfo(body.getBrowserInfo());
@@ -581,7 +573,7 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 </details>
 
 
-**Step 13.** If want to implement Native 3DS2, you'll have to implement the `/payments/details` call in `/controllers/ApiController`.
+**Step 13 (Optional).** If want to implement Native 3DS2, you'll have to implement the `/payments/details` call in `/controllers/ApiController`.
 Otherwise, skip this step and go to **step 14**.
 
 <details>
@@ -597,6 +589,25 @@ Otherwise, skip this step and go to **step 14**.
         log.info("PaymentDetailsResponse {}", response);
         return ResponseEntity.ok().body(response);
     }
+```
+
+</details>
+
+<details>
+<summary>Click to show me the answer</summary>
+
+```java
+    @PostMapping("/api/payments")
+    public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
+        ...
+
+        // Add the following lines, if you want to enable the Native 3DS2 flow:
+        // Note: Visa requires additional properties to be sent in the request, see documentation for Native 3DS2: https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment
+        authenticationData.setThreeDSRequestData(new ThreeDSRequestData().nativeThreeDS(ThreeDSRequestData.NativeThreeDSEnum.PREFERRED));
+        paymentRequest.setAuthenticationData(authenticationData);
+
+	...
+}
 ```
 
 </details>
