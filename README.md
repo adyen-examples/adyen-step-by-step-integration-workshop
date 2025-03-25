@@ -92,7 +92,7 @@ Open this repository in codespaces, [Gitpod](https://gitpod.io/#https://github.c
 
 **Step 0.** Build the project using `./gradlew bootRun` and see if it works.
 
-If you see the following message in your console logs, it means that you've successfully ran the application. The server will now start listening for incoming requests; Press `Control` + `D` to stop the webserver application.
+If you see the following message in your console logs, it means that you've successfully ran the application. The server will now start listening for incoming requests; Press `Control` + `C` to stop the webserver application.
    - Note: If you see a message with "80% executing...", you're good to go. It means that your webserver is listening for request, and it will keep listening until you force it to stop (see above).
 A browser should open with the following screen: **"Workshop: Build Your Own Adyen Payment Integration"**
 
