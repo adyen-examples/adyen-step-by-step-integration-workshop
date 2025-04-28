@@ -882,8 +882,11 @@ If you want to go the extra mile, you can try enabling the following payment met
 Well done! You've now set a good understanding of a basic payment flow. We encourage you to explore and understand our [different use-cases (fully-working integration-examples) on github.com/adyen-examples](https://github.com/adyen-examples/).
 
 ## Additional content
+For additional use cases, you can (optionally) explore the following resources for a "Part 2" of the workshop:
 * [Tokenization Module](README_TOKENIZATION.md)
 * [Preauthorisation Module](README_PREAUTHORISATION.md)
+
+You can find a fully-working solution on [github.com/adyen-examples](https://github.com/adyen-examples/).
 
 ## Contacting us
 
