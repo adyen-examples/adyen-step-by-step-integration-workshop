@@ -164,7 +164,7 @@ public class DependencyInjectionConfiguration {
         // Step 4
         var config = new Config();
         config.setApiKey(applicationConfiguration.getAdyenApiKey()); // We now use the Adyen API Key
-        config.setEnvironment(Environment.TEST);		             // Sets the environment to TEST
+        config.setEnvironment(Environment.TEST);		     // Sets the environment to TEST
         return new Client(config);
     }
 
@@ -587,8 +587,8 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 </details>
 
 
-**Step 13.** If want to implement Native 3DS2, you'll have to implement the `/payments/details` call in `/controllers/ApiController`.
-Otherwise, skip this step and go to **step 14**.
+**Step 13.** If want to implement Native 3DS2, implement the `/api/payments/details` call in `/controllers/ApiController`.
+Otherwise, skip this step and go to **Step 14**.
 
 <details>
 <summary>Click to show me the answer</summary>
