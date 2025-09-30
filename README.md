@@ -11,7 +11,7 @@ This README will guide you through the steps to build an Adyen integration and m
 You'll need a few things to get started:
 * Access to an [Adyen Test Account](https://www.adyen.com/signup).
 * You can login to the [Adyen Customer Area on TEST](https://ca-test.adyen.com/) and navigate to your Merchant Account (ECOM).
-* An IDE (like IntelliJ or VsCode) and Java SDK v17+, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces or [Gitpod](https://gitpod.io/#https://github.com/adyen-examples/adyen-step-by-step-integration-workshop).
+* An IDE (like IntelliJ or VsCode) and Java SDK v17+, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces.
 
 
 
@@ -88,7 +88,10 @@ In this workshop, you'll learn how to:
 
 ### Start - Step-by-Step Guide:
 
-Open this repository in codespaces, [Gitpod](https://gitpod.io/#https://github.com/adyen-examples/adyen-step-by-step-integration-workshop) or your (local) IDE.
+Open this repository locally or in codespaces:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/adyen-examples/adyen-step-by-step-integration-workshop)
+
 
 **Step 0.** Build the project using `./gradlew bootRun` and see if it works.
 
@@ -109,7 +112,7 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
 
 **Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount `-ECOM` and created credentials in the API Credentials page in the Customer Area).
 **And** [generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key) on the same page as where you create your API Key.
-   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080` if you're working on your localhost, otherwise use the URL of where you deploy your application, e.g. `https://*.gitpod.io`, or `https://*.github.dev`). This allows the Adyen.Web Dropin/Components to load on your specified page. The `*`-symbol indicates to accept any subdomain.
+   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080` if you're working on your localhost, otherwise use the URL of where you deploy your application, e.g. `https://*.github.dev` or `https://localhost:8080`). This allows the Adyen.Web Dropin/Components to load on your specified page. The `*`-symbol indicates to accept any subdomain.
    - Pro-tip #1: Create your API Key on Merchant Account level & Make sure you **copy your key correctly**.
    - Pro-tip #2: Make 101% sure you copy your key correctly! :)
    - Pro-tip #3: **SAVE YOUR CHANGES**!!
@@ -131,8 +134,6 @@ export ADYEN_API_KEY='Aq42....xx'
 export ADYEN_CLIENT_KEY='test_yourclientkey'
 export ADYEN_MERCHANT_ACCOUNT='YourMerchantAccountNameECOM'
 ```
-   - Note: Gitpod will inject previously used environment variables as configured in [https://gitpod.io/variables](https://gitpod.io/variables) when you start a new workspace. The injection **only** happens when the workspace is started. If you've changed variables in [https://gitpod.io/variables](https://gitpod.io/variables) during this, your changes will **not** be reflected immediately. You can 'sync' your variables, by running `eval $(gp env -e)` in your terminal. This will import the variables into your gitpod workspace.
-
 
 You can now access your keys in your application anywhere:
 - `applicationConfiguration.getAdyenApiKey()`
@@ -828,7 +829,7 @@ public RedirectView redirect(@RequestParam(required = false) String payload, @Re
 
 You can receive webhooks by enabling webhooks in the Customer Area, followed by creating your `/webhooks`-endpoint in `controllers/WebhookController.java`.
    - [Read the documentation to understand why we need to enable and verify HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures/)
-   - Create a standard webhook in your Customer Area. Example URL -> `https://xxxx-xx.gitpod.io/webhooks` or `https://xxxx.github.dev/webhooks`
+   - Create a standard webhook in your Customer Area. Example URL: `https://xxxx.github.dev/webhooks`
    - Inject your `ADYEN_HMAC_KEY` in your `ApplicationConfiguration.java` by either exporting the `ADYEN_HMAC_KEY` value or adding it to `application.properties`. You can then use this key to verify the incoming HMAC signature from your webhoo
 
 <details>
