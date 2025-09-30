@@ -1,28 +1,46 @@
 {
-	"name": "Java",
-	
-	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+  "name": "Java",
 
-	"features": {
-		"ghcr.io/devcontainers/features/java:1": {
-			"version": "none",
-			"installMaven": "false",
-			"installGradle": "true"
-		}
-	},
+  "image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally
-	"forwardPorts": [ 8080 ],
-
-    // Set forwarded port 8080 to public
-    "portsAttributes": {
-      "8080": {
-        "label": "Make 8080 public",
-        "onAutoForward": "notify",
-        "visibility": "public"
-      }
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
     },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "none",
+      "installMaven": "false",
+      "installGradle": "true"
+    }
+  },
 
-	// Build
-    "postStartCommand": "gradle wrapper && ./gradlew build"
+  // Use 'forwardPorts' to make a list of ports inside the container available locally
+  "forwardPorts": [ 8080 ],
+
+  // Set forwarded port 8080 to public
+  "portsAttributes": {
+    "8080": {
+      "label": "Make 8080 public",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+
+
+  // Build
+  "postStartCommand": "gradle wrapper && ./gradlew build",
+
+  // MCP
+  "postCreateCommand": "npm install ./adyen-mcp-0.3.0.tgz",
+
+  // Customizations
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.copilot"
+      ]
+    }
+  },
+
+  "remoteUser": "root"
 }

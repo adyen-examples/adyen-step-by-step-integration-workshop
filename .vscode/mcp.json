@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "adyen-mcp-server": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/workspaces/adyen-step-by-step-integration-workshop/node_modules/@adyen/mcp/dist/index.js",
+        "--adyenApiKey", "-",
+        "--env", "TEST"
+      ]
+    }
+  }
+}
