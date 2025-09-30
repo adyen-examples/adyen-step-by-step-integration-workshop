@@ -24,6 +24,6 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 
-    "postCreateCommand": "gradle wrapper && ./gradlew bootJar && echo ''",
+    "postCreateCommand": "gradle wrapper && ./gradlew build",
     "postStartCommand": "echo './gradlew bootRun'"
 }
