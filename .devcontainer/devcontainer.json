@@ -1,5 +1,6 @@
 {
 	"name": "Java",
+	
 	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
 
 	"features": {
@@ -10,20 +11,18 @@
 		}
 	},
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// Use 'forwardPorts' to make a list of ports inside the container available locally
 	"forwardPorts": [ 8080 ],
 
     // Set forwarded port 8080 to public
     "portsAttributes": {
       "8080": {
-        "label": "Workshop",
-        "onAutoForward": "openBrowser",
+        "label": "Make 8080 public",
+        "onAutoForward": "notify",
         "visibility": "public"
       }
     },
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-
-    "postCreateCommand": "gradle wrapper && ./gradlew build",
-    "postStartCommand": "echo './gradlew bootRun'"
+	// Build
+    "postStartCommand": "gradle wrapper && ./gradlew build"
 }
