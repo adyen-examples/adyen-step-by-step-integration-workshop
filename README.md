@@ -118,15 +118,16 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
    - Pro-tip #3: **SAVE YOUR CHANGES**!!
    - Pro-tip #4: Read what the Client Key is used for in the documentation.
 
-**Step 3.** Add the following values from steps 1 and 2 to the `ApplicationConfiguration.java` in `/main/java/com/adyen/workshop/configurations`:
-   - The easiest way to to insert your keys, is to edit the `application.properties`-file **(without the quotes!)**.
+**Step 3.** Add the `ADYEN_API_KEY`, `ADYEN_CLIENT_KEY`, and `ADYEN_MERCHANT_ACCOUNT` from steps 1 and 2 to `/main/java/com/adyen/workshop/resources/application.properties`. Pick either options:
+   - Option 1: Edit the `application.properties`-file in `/resources/`.
 ```
-ADYEN_API_KEY=Aq42....xx
-ADYEN_CLIENT_KEY=test_yourclientkey
-ADYEN_MERCHANT_ACCOUNT=YourMerchantAccountName
+ADYEN_API_KEY=Aq42_ReplaceWithYourAdyenApiKey
+ADYEN_CLIENT_KEY=test_ReplaceWithYourAdyenClientkey
+ADYEN_MERCHANT_ACCOUNT=ReplaceWithYourMerchantAccountName
 ```
+to the `ApplicationConfiguration.java` in :
 
-   - Best practice for developers: `export` the variables in the terminal. The Spring Boot framework automatically injects your variables on startup by matching the attributed string-values in your `ApplicationConfiguration.java`.
+   - Option 2 - Best practice: You can `export` the variables in the terminal. The Spring Boot framework automatically injects your variables on startup by matching the attributed string-values in your `/main/java/com/adyen/workshop/configurations/ApplicationConfiguration.java`.
 For example: `@Value("${ADYEN_API_KEY:#{null}}")` will check if the `ADYEN_API_KEY` is set, if not, it will default to `null`.
    - Open the terminal and execute the following command in your terminal:
 ```bash
