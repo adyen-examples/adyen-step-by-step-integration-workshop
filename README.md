@@ -119,13 +119,12 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
    - Pro-tip #4: Read what the Client Key is used for in the documentation.
 
 **Step 3.** Add the `ADYEN_API_KEY`, `ADYEN_CLIENT_KEY`, and `ADYEN_MERCHANT_ACCOUNT` from steps 1 and 2 to `/main/java/com/adyen/workshop/resources/application.properties`. Pick either options:
-   - Option 1: Edit the `application.properties`-file in `/resources/`.
+   - Option 1: Edit the `application.properties`-file in `/resources/`
 ```
 ADYEN_API_KEY=Aq42_ReplaceWithYourAdyenApiKey
 ADYEN_CLIENT_KEY=test_ReplaceWithYourAdyenClientkey
 ADYEN_MERCHANT_ACCOUNT=ReplaceWithYourMerchantAccountName
 ```
-to the `ApplicationConfiguration.java` in :
 
    - Option 2 - Best practice: You can `export` the variables in the terminal. The Spring Boot framework automatically injects your variables on startup by matching the attributed string-values in your `/main/java/com/adyen/workshop/configurations/ApplicationConfiguration.java`.
 For example: `@Value("${ADYEN_API_KEY:#{null}}")` will check if the `ADYEN_API_KEY` is set, if not, it will default to `null`.
@@ -141,17 +140,16 @@ You can now access your keys in your application anywhere:
 - `applicationConfiguration.getAdyenClientKey()`
 - `applicationConfiguration.getAdyenMerchantAccount()`
 
-*Note: We'll create the `HMAC Key` during the webhooks step, you can ignore this for now.*
+*Note: Ignore the ADYEN_HMAC_KEY value, we'll create the `HMAC Key` during the webhooks step later on and add this value.*
 
-**Step 4:** Use the API Key in your application by instantiating the Adyen.`Client`. We use this to securely communicate with the Adyen platform.
+**Step 4:** Now that we've injected our keys in the application, we're now going to use these keys in our application by instantiating the `Adyen.Client`.
 
-In `/com/adyen/workshop/configurations/`, you'll find the `DependencyInjectionConfiguration.java` class. This is where we create our Adyen instances and **re-use** them using Spring's Constructor Dependency Injection (CDI) - A `@Bean` is an object that is instantiated, assembled, and managed by the Spring IoC container.
-You should be able to inject these classes similar to how we inject `ApplicationConfiguration.java` in any constructor.
+- Navigate to `/com/adyen/workshop/configurations/DependencyInjectionConfiguration.java`. This is where we create our Adyen instances and **re-use** them using Spring's Constructor Dependency Injection (CDI) - A `@Bean` is an object that is instantiated, assembled, and managed by the Spring IoC container. 
 
-**Exercise:** Create your Adyen.`Client` by creating a `new Config()` object in `configurations/DependencyInjectionConfiguration.java`, passing your `ADYEN_API_KEY`, and specifying `Environment.TEST`.
-This client is now configured to send secure API requests to Adyen. See code snippet below:
+- Create the `Adyen.Client` by creating a `new Config()` object in `configurations/DependencyInjectionConfiguration.java`, passing your `ADYEN_API_KEY`, and specifying `Environment.TEST`. This client is now configured to send secure API requests to Adyen. See code snippet below:
 
 ```java
+// ...
 
 @Configuration
 public class DependencyInjectionConfiguration {
@@ -182,9 +180,10 @@ public class DependencyInjectionConfiguration {
 ```
 
 
-
 **Step 5.** **You can skip this step**: Install the [Java library](https://github.com/Adyen/adyen-java-api-library) by adding the following line to the `build.gradle` file.
-For your convenience, we've **already included this in this project**. You can visit the `build.gradle` file and verify whether the following line is included:
+For your convenience, we've **already included this in this project**. 
+
+- Visit the `build.gradle` file and verify whether the following line is included:
 
 ```
 	implementation 'com.adyen:adyen-java-api-library:31.3.0'
