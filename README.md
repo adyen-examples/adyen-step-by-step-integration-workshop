@@ -35,9 +35,9 @@ The project structure follows a Model-View-Controller (MVC) structure. You can s
     * We've added some css and images that you can use. Note: You don't have to use it. Text-only is fine!
   * You can manage your environment variables in the `application.properties`-file which gets picked up by the `ApplicationConfiguration.java` class.
 
-* To run the project, you have two options:
-  * `./gradlew bootRun` will start the server on port 8080.
-  * To run the project from your IDE, go to `src/main/java/com/adyen/workshop/MainApplication.java`
+* To run the project:
+  * Run `gradle wrapper` in your terminal
+  * Build & run the application using `./gradlew bootRun`
 
 
 ### Briefing
@@ -51,7 +51,7 @@ You've been tasked to implementing a credit card payment end-to-end.
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=empathy-engineering/clean-template&repo=761184899&skip_quickstart=true)
 
 
-**Step 1.** Build the project using `./gradlew bootRun`:
+**Step 1.** Build the project using `gradle wrapper && ./gradlew bootRun`:
 
 If you see the following message in your console logs, it means that you've successfully ran the application. 
 
@@ -68,4 +68,4 @@ A browser should open with the following screen: **"Workshop: Build Your Own Ady
 
 ### Definition of Done:
 
-* You've implemented a successful payment on TEST that can be seen in your [Customer Arena page](https://ca-test.adyen.com/).
+* You've implemented a successful payment on TEST that can be seen in your [Customer Area page](https://ca-test.adyen.com/).
