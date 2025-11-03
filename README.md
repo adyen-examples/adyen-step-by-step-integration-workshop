@@ -48,7 +48,7 @@ You've been tasked to implementing a credit card payment end-to-end.
 
 ### Start here:
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=empathy-engineering-js/clean-template&repo=761184899&skip_quickstart=true)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=empathy-engineer%2Fnode-clean-template&repo=761184899&skip_quickstart=true)
 
 
 **Step 1.** Build the project using `cd src && npm install && npm run dev`:
