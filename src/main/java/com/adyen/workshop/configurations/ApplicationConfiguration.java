@@ -5,28 +5,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ApplicationConfiguration {
-    @Value("${server.port}")
+    @Value("${server.port}")                    // This will be prefilled from application.properties (e.g. port 8080)
     private int serverPort;
 
-    @Value("${ADYEN_API_KEY:#{null}}") // Don't edit @Value(...)
+    @Value("${YOUR_ENVIRONMENT_VAR_1:#{null}}") // This will be prefilled from application.properties
     private String adyenApiKey;
 
-    @Value("${ADYEN_MERCHANT_ACCOUNT:#{null}}") // Don't edit @Value(...)
+    @Value("${YOUR_ENVIRONMENT_VAR_2:#{null}}") // This will be prefilled from application.properties
     private String adyenMerchantAccount;
 
-    @Value("${ADYEN_CLIENT_KEY:#{null}}") // Don't edit @Value(...)
+    @Value("${YOUR_ENVIRONMENT_VAR_3:#{null}}") // This will be prefilled from application.properties
     private String adyenClientKey;
 
-    @Value("${ADYEN_HMAC_KEY:#{null}}") // Don't edit @Value(...)
-    private String adyenHmacKey; // We'll cover this in step 16.
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
+    @Value("${YOUR_ENVIRONMENT_VAR_4:#{null}}") // This will be prefilled from application.properties
+    private String adyenHmacKey;
 
     public String getAdyenApiKey() {
         return adyenApiKey;
@@ -58,5 +50,13 @@ public class ApplicationConfiguration {
 
     public void setAdyenHmacKey(String adyenHmacKey) {
         this.adyenHmacKey = adyenHmacKey;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
     }
 }

@@ -20,33 +20,19 @@ public class ViewController {
         this.applicationConfiguration = applicationConfiguration;
     }
 
+    // The main entry point that will be shown, see resources/static/templates/index.html
     @GetMapping("/")
     public String index() {
         return "index";
     }
 
-    @GetMapping("/preview")
-    public String preview(@RequestParam String type, Model model) {
-        model.addAttribute("type", type);
-        return "preview";
-    }
-
-    @GetMapping("/checkout")
-    public String checkout(@RequestParam String type, Model model) {
-        model.addAttribute("type", type);
-        model.addAttribute("clientKey", this.applicationConfiguration.getAdyenClientKey());
-        return "checkout";
-    }
-
+    // Example on how to pass variables using thymeleaf templates, see `resources/static/templates/result.html`
+    // The {{type}} values can be: `success`, `failed`, `error`, `pending`, see `resources/static/images/{{type}}.html`
+    // Visit your /result/success in your browser after running `/gradlew bootRun`
     @GetMapping("/result/{type}")
     public String result(@PathVariable String type, Model model) {
         model.addAttribute("type", type);
+        //model.addAttribute("some", "example");
         return "result";
-    }
-
-    @GetMapping("/redirect")
-    public String redirect(Model model) {
-        model.addAttribute("clientKey", this.applicationConfiguration.getAdyenClientKey());
-        return "redirect";
     }
 }

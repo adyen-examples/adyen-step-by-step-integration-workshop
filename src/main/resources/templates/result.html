@@ -6,6 +6,7 @@
     <title th:text="${type}"></title>
 </head>
 <body>
+<!-- Example result page / how to use thymeleaf templates to check-->
 <div layout:fragment="content" class="status-container">
     <div class="status">
         <img th:src="${'/images/' + type + '.svg'}" class="status-image" alt="">
