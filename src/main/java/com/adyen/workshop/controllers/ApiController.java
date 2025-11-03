@@ -1,6 +1,9 @@
 package com.adyen.workshop.controllers;
 
+import com.adyen.workshop.configurations.ApplicationConfiguration;
+
 import jakarta.servlet.http.HttpServletRequest;
+import java.com.adyen.com.workshop.configurations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +38,7 @@ public class ApiController {
 
     // Example endpoint
     @PostMapping("/endpointname")
-    public ResponseEntity<String> payments(@RequestHeader String host, @RequestBody String body, HttpServletRequest request) throws IOException, ApiException {
+    public ResponseEntity<String> payments(@RequestHeader String host, @RequestBody String body, HttpServletRequest request) throws IOException {
         // `@RequestBody String body` contains the body of the POST requests, you can also add a strongly typed object here*
         return ResponseEntity.ok().body("not implemented");
     }
