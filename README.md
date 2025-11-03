@@ -1,5 +1,4 @@
-# Build Your Own Payment Integration with Adyen - Clean Spring Boot template
-
+# Build Your Own Payment Integration with Adyen - Clean template
 
 
 ### Prerequisites
@@ -10,34 +9,34 @@ You'll need a few things to get started:
 
 
 
-### Context of the code repository.
-
-This workshop uses a Java+Spring Boot in the backend with a static (HTML/CSS/Javascript) frontend with a `thymeleaf` template (a server-side Java template engine that can process HTML).
-
-We start with a clean/empty Spring Boot template, which you'll extend into a fully working application that can accept payments on TEST.
-
-
 ### Project Structure
 
-The project structure follows a Model-View-Controller (MVC) structure. You can skip this if you're familiar with this.
+You can skip this section if you're familiar with this.
 
-* The Java code is to be found in `src/main/java/com/adyen/workshop`
-  * `/controllers` folder contains your endpoints. The following example creates the `/hello-world` endpoint; see `/controllers/ApiController.java.`
+* The code is to be found in `src/`-folder:
+  * `/src/index.js` folder contains your endpoints. The following example creates the `/hello-world` endpoint;
 
   ```
-      @GetMapping("/hello-world")
-      public ResponseEntity<String> helloWorld() throws Exception {
-          return ResponseEntity.ok().body("This is the 'Hello World' from the workshop - You've successfully finished step 0!");
+    // Get payment methods
+    app.post("/hello-world", async (req, res) => {
+      try {
+        res.json("hello-world!");
+      } catch (err) {
+        console.error(`Error: ${err.message}, error code: ${err.errorCode}`);
+        res.status(err.statusCode).json(err.message);
       }
+    });
   ```
 
-  * `/views`-folder contains view controllers that show the HTML pages in the `/resources/static/` folder
-    * We've added some css and images that you can use. Note: You don't have to use it. Text-only is fine!
-  * You can manage your environment variables in the `application.properties`-file which gets picked up by the `ApplicationConfiguration.java` class.
+  * `/views`-folder contains view controllers that show the HTML pages in the `views/layout/` folder
+    * We've added some css and images in `/src/public/css` & `/src/public/images` that you can use. Note: You don't have to use it. Text-only is fine!
+  * You can manage your environment variables by creating the `.env`-file which gets picked up by the using the `.dotenv` library.
 
-* To run the project, you have two options:
-  * `./gradlew bootRun` will start the server on port 8080.
-  * To run the project from your IDE, go to `src/main/java/com/adyen/workshop/MainApplication.java`
+* To run the project:
+  * Navigate to the folder `cd /src`
+  * Install the dependencies using `npm install`
+  * Run the project using `npm run dev`
+
 
 
 ### Briefing
@@ -46,26 +45,23 @@ You're working as a full-stack developer for an E-Commerce company that sells he
 They sell the best headphones and sunglasses at 49.99 each, and you're incredibly excited to take on this challenge.
 You've been tasked to implementing a credit card payment end-to-end.
 
+
 ### Start here:
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=empathy-engineering/clean-template&repo=761184899&skip_quickstart=true)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=empathy-engineering-js/clean-template&repo=761184899&skip_quickstart=true)
 
 
-**Step 1.** Build the project using `./gradlew bootRun`:
-
-If you see the following message in your console logs, it means that you've successfully ran the application. 
+**Step 1.** Build the project using `cd src && npm install && npm run dev`:
 
 The server will now start listening for incoming requests; Press `Control` + `C` to stop the webserver application.
    - Note: If you see a message with "80% executing...", you're good to go. It means that your webserver is listening for request, and it will keep listening until you force it to stop (see above).
 A browser should open with the following screen: **"Workshop: Build Your Own Adyen Payment Integration"**
 
 ```
-----------------------------------------------------------
-	Application is running on http://localhost:8080
-----------------------------------------------------------
+Server started -> http://localhost:8080
 ```
 
 
 ### Definition of Done:
 
-* You've implemented a successful payment on TEST that can be seen in your [Customer Arena page](https://ca-test.adyen.com/).
+* You've implemented a successful payment on TEST that can be seen in your [Customer Area page](https://ca-test.adyen.com/).
