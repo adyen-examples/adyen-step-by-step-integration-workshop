@@ -36,8 +36,9 @@ app.set("view engine", "handlebars");
 
 /* ################# YOUR CONTROLLER / API ENDPOINTS ###################### */
 
-// Get payment methods
-app.post("/hello-world", async (req, res) => {
+
+// Hello-world
+app.get("/hello-world", async (req, res) => {
   try {
     res.json("hello-world");
   } catch (err) {
@@ -46,6 +47,19 @@ app.post("/hello-world", async (req, res) => {
   }
 });
 
+
+
+/* ################# YOUR VIEW CONTROLLERS ###################### */
+
+// Index (select a demo)
+app.get("/", (req, res) => res.render("index"));
+
+// Result page example on how to pass parameters
+app.get("/result/:type", (req, res) =>
+  res.render("result", {
+    type: req.params.type,
+  })
+);
 
 // Start server
 const PORT = process.env.PORT || 8080;
