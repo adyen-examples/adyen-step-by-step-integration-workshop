@@ -38,6 +38,29 @@ public class WebhookController {
     // Step 16 - Validate the HMAC signature using the ADYEN_HMAC_KEY
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
-        return ResponseEntity.accepted().build();
+        log.info("Received: {}", json);
+        var notificationRequest = NotificationRequest.fromJson(json);
+        var notificationRequestItem = notificationRequest.getNotificationItems().stream().findFirst();
+
+        try {
+            NotificationRequestItem item = notificationRequestItem.get();
+
+            // Step 16 - Validate the HMAC signature using the ADYEN_HMAC_KEY
+            if (!hmacValidator.validateHMAC(item, this.applicationConfiguration.getAdyenHmacKey())) {
+                log.warn("Could not validate HMAC signature for incoming webhook message: {}", item);
+                return ResponseEntity.unprocessableEntity().build();
+            }
+
+            // Success, log it for now
+            log.info("Received webhook with event {}", item.toString());
+
+            return ResponseEntity.accepted().build();
+        } catch (SignatureException e) {
+            // Handle invalid signature
+            return ResponseEntity.unprocessableEntity().build();
+        } catch (Exception e) {
+            // Handle all other errors
+            return ResponseEntity.status(500).build();
+        }
     }
 }

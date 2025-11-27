@@ -20,7 +20,8 @@ public class DependencyInjectionConfiguration {
     Client client() {
         // Step 4
         var config = new Config();
-
+        config.setApiKey(applicationConfiguration.getAdyenApiKey()); // We now use the Adyen API Key
+        config.setEnvironment(Environment.TEST);		             // Sets the environment to TEST
         return new Client(config);
     }
 
