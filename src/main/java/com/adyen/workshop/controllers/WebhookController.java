@@ -35,6 +35,7 @@ public class WebhookController {
         this.hmacValidator = hmacValidator;
     }
 
+    // Step 16 - Validate the HMAC signature using the ADYEN_HMAC_KEY
     @PostMapping("/webhooks")
     public ResponseEntity<String> webhooks(@RequestBody String json) throws Exception {
         log.info("Received: {}", json);

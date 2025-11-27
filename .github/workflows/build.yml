@@ -7,7 +7,6 @@ on:
       - '**/README.md'
       - README.md
       - .gitignore
-      - .gitpod.yml
       - LICENSE
   pull_request:
     branches: [ main, workshop/solution ]
@@ -15,8 +14,10 @@ on:
       - '**/README.md'
       - README.md
       - .gitignore
-      - .gitpod.yml
       - LICENSE
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -35,4 +36,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew build --debug
+        run: ./gradlew build
