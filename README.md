@@ -144,7 +144,7 @@ You can now access your keys in your application anywhere:
 
 **Step 4:** Now that we've injected our keys in the application, we're now going to use these keys in our application by instantiating the `Adyen.Client`.
 
-- Navigate to `/com/adyen/workshop/configurations/DependencyInjectionConfiguration.java`. This is where we create our Adyen instances and **re-use** them using Spring's Constructor Dependency Injection (CDI) - A `@Bean` is an object that is instantiated, assembled, and managed by the Spring IoC container. 
+- Navigate to `./src/main/java/com/adyen/workshop/configurations/DependencyInjectionConfiguration.java`. This is where we create our Adyen instances and **re-use** them using Spring's Constructor Dependency Injection (CDI) - A `@Bean` is an object that is instantiated, assembled, and managed by the Spring IoC container. 
 
 - Create the `Adyen.Client` by creating a `new Config()` object in `configurations/DependencyInjectionConfiguration.java`, passing your `ADYEN_API_KEY`, and specifying `Environment.TEST`. This client is now configured to send secure API requests to Adyen. See code snippet below:
 
