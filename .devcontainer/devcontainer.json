@@ -11,6 +11,8 @@
 		}
 	},
 
+	"postCreateCommand": "ngrok config add-authtoken 36K00B3h52tPWqoNDgjE6Zx1TUG_3U4K4rFL6TwDUNfc2urC3 && ngrok http 8080 &",
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally
 	"forwardPorts": [ 8080 ],
 
