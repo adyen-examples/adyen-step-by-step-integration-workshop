@@ -49,7 +49,7 @@ public class ApiController {
 
     // Step 9 - Implement the /payments call to Adyen.
     @PostMapping("/api/payments")
-    public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
+    public ResponseEntity<PaymentResponse> payments(@RequestBody PaymentRequest body) throws IOException, ApiException {
 
         return ResponseEntity.ok().body(null);
     }

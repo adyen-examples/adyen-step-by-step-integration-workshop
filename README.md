@@ -5,7 +5,6 @@ This README will guide you through the steps to build an Adyen integration and m
 * The initial configuration & setup: Adyen Merchant Account, Adyen API Credentials, and Adyen Client Key.
 * The API requests needed to fetch the payment methods and make your first TEST payment: `/paymentMethods`, `/payments`, `/payments/details`, and 3D Secure 2.
 * The webhooks: Setup, configuration, and response handling.
-
 ### Prerequisites
 
 You'll need a few things to get started:
@@ -112,7 +111,7 @@ You'll notice that in `MainApplication.java`, we check if you've inserted your k
 
 **Step 2.** [Create your Adyen API Key](https://docs.adyen.com/development-resources/api-credentials/#generate-api-key). Ensure you've created the API Key on the Merchant Account level (e.g., you've selected your MerchantAccount `-ECOM` and created credentials in the API Credentials page in the Customer Area).
 **And** [generate your Adyen Client Key](https://docs.adyen.com/development-resources/client-side-authentication/#get-your-client-key) on the same page as where you create your API Key.
-   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080` if you're working on your localhost, otherwise use the URL of where you deploy your application, e.g. `https://*.github.dev` or `https://localhost:8080`). This allows the Adyen.Web Dropin/Components to load on your specified page. The `*`-symbol indicates to accept any subdomain.
+   - Add the correct URL to the allowed origins (e.g. `http://localhost:8080` if you're working on your localhost, otherwise use the URL of where you deploy your application, e.g. `https://*.github.dev`). This allows the Adyen.Web Dropin/Components to load on your specified page. The `*`-symbol indicates to accept any subdomain.
    - Pro-tip #1: Create your API Key on Merchant Account level & Make sure you **copy your key correctly**.
    - Pro-tip #2: Make 101% sure you copy your key correctly! :)
    - Pro-tip #3: **SAVE YOUR CHANGES**!!
@@ -319,7 +318,7 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
 ```java
     // Step 9 - Implement the /payments call to Adyen.
     @PostMapping("/api/payments")
-    public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
+    public ResponseEntity<PaymentResponse> payments(@RequestBody PaymentRequest body) throws IOException, ApiException {
         var paymentRequest = new PaymentRequest();
 
         var amount = new Amount()
@@ -334,7 +333,7 @@ We start by defining a new endpoint `/api/payments` to which our frontend will s
         var orderRef = UUID.randomUUID().toString();
         paymentRequest.setReference(orderRef);
         // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
-        paymentRequest.setReturnUrl(request.getScheme() + "://" + host + "/handleShopperRedirect?orderRef=" + orderRef); // Example: Turns into http://localhost:8080/handleShopperRedirect?orderRef=354fa90e-0858-4d2f-92b9-717cb8e18173
+        paymentRequest.setReturnUrl("http://localhost:8080/handleShopperRedirect");
 
         log.info("PaymentsRequest {}", paymentRequest);
         var response = paymentsApi.payments(paymentRequest);
@@ -497,10 +496,10 @@ This key helps avoid unwanted duplication in case of failures and retries (e.g.,
 <details>
 <summary>Click to show me the answer</summary>
 
-You can add the idempotency key to the existing code in the `/controllers/ApiController.java -> '/api/payments/'`-function
+You can _optionally_ add the idempotency key to the existing code in the `/controllers/ApiController.java -> '/api/payments/'`-function
 
 ```java
-    // Step 11 - Add the idempotency key
+    // Step 11 - Optionally, add the idempotency key
     var requestOptions = new RequestOptions();
     requestOptions.setIdempotencyKey(UUID.randomUUID().toString());
 
@@ -532,7 +531,7 @@ In this workshop, we implement the **Redirect 3DS2 flow** first, in later steps 
 
 **Step 12.** Add the following fields to our `/payments`-request to enable 3DS2 Redirect, note that we can get these field from the frontend (`state.data`), which you can find in the arguments of the (backend)-`/payments` function (see variable: `body`)
 ``` 
-   public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request)`
+   public ResponseEntity<PaymentResponse> payments(@RequestBody PaymentRequest body)`
 ```
 Go back to the `/controller/ApiController`, add the following parameters to your `PaymentRequest` for the redirect flow:
    * Origin
@@ -548,13 +547,27 @@ Go back to the `/controller/ApiController`, add the following parameters to your
 <details>
 <summary>Click to show me the answer</summary>
 
-**Note:** We're **extending** the PaymentRequest by adding additional parameters. Be careful what you copy-paste! :)
+**Note:** We're **extending** the PaymentRequest by adding additional parameters!
 
 ```java
     @PostMapping("/api/payments")
-    public ResponseEntity<PaymentResponse> payments(@RequestHeader String host, @RequestBody PaymentRequest body, HttpServletRequest request) throws IOException, ApiException {
-        var paymentRequest = new PaymentRequest(); // <---
-        // ...
+    public ResponseEntity<PaymentResponse> payments(@RequestBody PaymentRequest body) throws IOException, ApiException {
+        var paymentRequest = new PaymentRequest();
+        
+        var amount = new Amount()
+                .currency("EUR")
+                .value(9998L);
+        paymentRequest.setAmount(amount);
+        paymentRequest.setMerchantAccount(applicationConfiguration.getAdyenMerchantAccount());
+        paymentRequest.setChannel(PaymentRequest.ChannelEnum.WEB);
+    
+        paymentRequest.setPaymentMethod(body.getPaymentMethod());
+    
+        var orderRef = UUID.randomUUID().toString();
+        paymentRequest.setReference(orderRef);
+        // The returnUrl field basically means: Once done with the payment, where should the application redirect you?
+        paymentRequest.setReturnUrl("http://localhost:8080/handleShopperRedirect");
+
 
         // Step 12 3DS2 Redirect - Add the following additional parameters to your existing payment request for 3DS2 Redirect:
         // Note: Visa requires additional properties to be sent in the request, see documentation for Redirect 3DS2: https://docs.adyen.com/online-payments/3d-secure/redirect-3ds2/web-drop-in/#make-a-payment
@@ -562,16 +575,15 @@ Go back to the `/controller/ApiController`, add the following parameters to your
         authenticationData.setAttemptAuthentication(AuthenticationData.AttemptAuthenticationEnum.ALWAYS);
         paymentRequest.setAuthenticationData(authenticationData);
 
-        // Add the following lines, if you want to enable the Native 3DS2 flow:
+        // Change the following lines, if you want to enable the Native 3DS2 flow:
         // Note: Visa requires additional properties to be sent in the request, see documentation for Native 3DS2: https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment
         //authenticationData.setThreeDSRequestData(new ThreeDSRequestData().nativeThreeDS(ThreeDSRequestData.NativeThreeDSEnum.PREFERRED));
         //paymentRequest.setAuthenticationData(authenticationData);
 
-        paymentRequest.setOrigin(request.getScheme() + "://" + host);
+        paymentRequest.setOrigin("https://localhost:8080");
         paymentRequest.setBrowserInfo(body.getBrowserInfo());
-        paymentRequest.setShopperIP(request.getRemoteAddr());
+        paymentRequest.setShopperIP("192.168.0.1");
         paymentRequest.setShopperInteraction(PaymentRequest.ShopperInteractionEnum.ECOMMERCE);
-
 
         var billingAddress = new BillingAddress();
         billingAddress.setCity("Amsterdam");
@@ -580,8 +592,16 @@ Go back to the `/controller/ApiController`, add the following parameters to your
         billingAddress.setStreet("Rokin");
         billingAddress.setHouseNumberOrName("49");
         paymentRequest.setBillingAddress(billingAddress);
-
-        // ...
+        
+        // Step 11 - Optionally add the idempotency key
+        var requestOptions = new RequestOptions();
+        requestOptions.setIdempotencyKey(UUID.randomUUID().toString());
+    
+        log.info("PaymentsRequest {}", paymentRequest);
+        var response = paymentsApi.payments(paymentRequest, requestOptions); // add RequestOptions here
+        log.info("PaymentsResponse {}", response);
+        
+        return ResponseEntity.ok().body(response);
     }
 ```
 
@@ -796,7 +816,7 @@ public RedirectView redirect(@RequestParam(required = false) String payload, @Re
     log.info("PaymentsDetailsResponse {}", paymentsDetailsResponse);
 
     // Handle response and redirect user accordingly
-    var redirectURL = "/result/";
+    var redirectURL = "http://localhost:8080/result/"; // Update your url here by replacing `http://localhost:8080` with where your application is hosted (if needed)
     switch (paymentsDetailsResponse.getResultCode()) {
         case AUTHORISED:
             redirectURL += "success";
