@@ -69,3 +69,4 @@ A browser should open with the following screen: **"Workshop: Build Your Own Ady
 ### Definition of Done:
 
 * You've implemented a successful payment on TEST that can be seen in your [Customer Area page](https://ca-test.adyen.com/).
+* You've set up a successful webhook.
