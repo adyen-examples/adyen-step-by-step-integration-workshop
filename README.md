@@ -223,7 +223,7 @@ We're now set up to do the `/paymentMethods`, `/payments` and `/payments/details
 
 **Note:** You can send a `curl-request` to test this endpoint. However, let's move on to step 8 to see how the Drop-in (frontend) interacts with this `/api/paymentMethods` endpoint.
 
-**Step 8.** In the frontend (`adyenWebImplementation.js`), let's make a request to this `/api/paymentMethods` endpoint and display the payment methods to the shopper.
+**Step 8.** In the frontend (`/resources/static/adyenWebImplementation.js`), let's make a request to this `/api/paymentMethods` endpoint and display the payment methods to the shopper.
 
 We automatically pass on your public `ADYEN_CLIENT_KEY` to your frontend (see `checkout.html`), you can access this variable using `clientKey`. If you want to find it, here it is:
 ```
