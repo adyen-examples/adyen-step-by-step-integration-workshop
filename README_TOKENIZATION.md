@@ -26,7 +26,7 @@ In order to enable subscriptions, we need to do three things:
    - Implement a new endpoint `/api/subscription-create`.
    - Understand the different ways you can flag transactions (`Subscriptions`,`CardOnFile`, and `UnscheduledCardOnFile`).
    - Update the frontend (Drop-in/Components) `adyenWebImplementation.js` so that the frontend will send a request to this endpoint.
-2. Handle the `RECURRING_CONTRACT` webhook, this webhook should contain the `recurringDetailReference` - We need store this value (we refer to this as the "token").
+2. Handle the webhook, this webhook should contain the `recurringDetailReference` - We need store this value (we refer to this as the "token").
    - Handle the `AUTHORISATION` webhook.
    - Note: instead of storing the value on application-level, you can also copy paste the recurringDetailReference manually.
 3. Use this token to make a payment.
@@ -44,4 +44,4 @@ I've verified and tested the following flows:
 
 I've triggered & handled the following webhooks:
 * [ ] Handle the `AUTHORISATION` webhook
-* [ ] Handle the `RECURRING_CONTRACT` webhook
+* [ ] Handle the recurring webhooks accordingly
