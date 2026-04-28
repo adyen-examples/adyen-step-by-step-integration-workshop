@@ -10,7 +10,7 @@ This README will guide you through the steps to build an Adyen integration and m
 You'll need a few things to get started:
 * Access to an [Adyen Test Account](https://www.adyen.com/signup).
 * You can login to the [Adyen Customer Area on TEST](https://ca-test.adyen.com/) and navigate to your Merchant Account (ECOM).
-* An IDE (like IntelliJ or VsCode) and Java SDK v17+, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces.
+* Spin up a workspace in an in-browser-IDE such as Codespaces.
 
 
 
@@ -850,7 +850,8 @@ public RedirectView redirect(@RequestParam(required = false) String payload, @Re
 You can receive webhooks by enabling webhooks in the Customer Area, followed by creating your `/webhooks`-endpoint in `controllers/WebhookController.java`.
    - [Read the documentation to understand why we need to enable and verify HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures/)
    - Create a standard webhook in your Customer Area. Example URL: `https://xxxx.github.dev/webhooks`
-   - Inject your `ADYEN_HMAC_KEY` in your `ApplicationConfiguration.java` by either exporting the `ADYEN_HMAC_KEY` value or adding it to `application.properties`. You can then use this key to verify the incoming HMAC signature from your webhoo
+   - Inject your `ADYEN_HMAC_KEY` in your `ApplicationConfiguration.java` by either exporting the `ADYEN_HMAC_KEY` value or adding it to `application.properties`. You can then use this key to verify the incoming HMAC signature from your webhook
+   - In your Codespaces workspace settings, ensure port 8080 is public
 
 <details>
   <summary>Click to show me the answer</summary>
