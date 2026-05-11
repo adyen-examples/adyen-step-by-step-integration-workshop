@@ -10,13 +10,13 @@ This README will guide you through the steps to build an Adyen integration and m
 You'll need a few things to get started:
 * Access to an [Adyen Test Account](https://www.adyen.com/signup).
 * You can login to the [Adyen Customer Area on TEST](https://ca-test.adyen.com/) and navigate to your Merchant Account (ECOM).
-* An IDE (like IntelliJ or VsCode) and Java SDK v17+, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces.
+* An IDE (like IntelliJ or VsCode) and Java SDK v17+ if you want to reuse the Java-specific examples and instructions, *alternatively,* you can spin up this workspace in a browser-IDE such as codespaces.
 
 
 
 ### Context of the code repository.
 
-This workshop uses a Java+Spring Boot in the backend with a static (HTML/CSS/Javascript) frontend with a `thymeleaf` template (a server-side Java template engine that can process HTML).
+This workshop uses a Java+Spring Boot in the backend with a static (HTML/CSS/Javascript) frontend with a `thymeleaf` template (a server-side Java template engine that can process HTML). If you prefer to use a different tech stack you can do so, but you won't be able to use the Java-specific examples and instructions.
 
 In this workshop, we're not asking you to build a complete integration from scratch but rather to fill in the voids based on resources you can find in the [Adyen Documentation](https://docs.adyen.com)
 or other online resources ([GitHub](https://github.com/adyen), [GitHub Examples](https://github.com/adyen-examples), [Adyen Help](https://help.adyen.com) etc.).
@@ -899,6 +899,19 @@ If you want to go the extra mile, you can try enabling the following payment met
 **Step 19.** [Enable Klarna](https://docs.adyen.com/payment-methods/klarna/web-drop-in/?tab=_code_payments_code__2), we'll need to add an additional parameter in the payment request.
    - Do not forget to enable the payment method in your [Customer Area](https://ca-test.adyen.com/)
    - Do not forget to add `LineItems` to your payment-request
+
+### Validating your application
+
+We have a set of Playwright tests to automatically check if the flow of your application is as expected (Advanced Flow with Cards only). The following commands will clone these tests, install the Playwright dependency and browsers, set your app URL, and run the tests.
+
+``` bash
+git clone https://github.com/adyen-examples/adyen-testing-suite.git 
+cd ./adyen-testing-suite/
+npm i -D @playwright/test
+npx playwright install
+export URL=YOUR_APP_URL
+npx playwright test ./workshop --reporter=list
+```
 
 Well done! You've now set a good understanding of a basic payment flow. We encourage you to explore and understand our [different use-cases (fully-working integration-examples) on github.com/adyen-examples](https://github.com/adyen-examples/).
 
