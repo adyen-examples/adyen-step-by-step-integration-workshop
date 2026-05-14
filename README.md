@@ -189,7 +189,7 @@ For your convenience, we've **already included this in this project**.
 ```
 
 
-**Step 6.** Include the latest [Adyen.Web Dropin/Components](https://docs.adyen.com/online-payments/release-notes/) by adding embed script(`.js`) and stylesheet(`.css`) to `/resources/templates/layout.html`.
+**Step 6.** Include the latest [Adyen.Web Components/Drop-in](https://docs.adyen.com/online-payments/release-notes/) by adding embed script(`.js`) and stylesheet(`.css`) to `/resources/templates/layout.html`.
   - Including this allows you to access the AdyenCheckout instance in JavaScript.
   - You'll have to find the correct (latest) version of Web Components/Drop-in here.
 
@@ -626,6 +626,22 @@ Otherwise, skip this step and go to **Step 14**.
     }
 ```
 
+In addition, uncomment the commented code in the answer of Step 12:
+
+```java
+    @PostMapping("/api/payments")
+    public ResponseEntity<PaymentResponse> payments(@RequestBody PaymentRequest body) throws IOException, ApiException {
+        // ...
+    
+        // Change the following lines, if you want to enable the Native 3DS2 flow:
+        // Note: Visa requires additional properties to be sent in the request, see documentation for Native 3DS2: https://docs.adyen.com/online-payments/3d-secure/native-3ds2/web-drop-in/#make-a-payment
+        authenticationData.setThreeDSRequestData(new ThreeDSRequestData().nativeThreeDS(ThreeDSRequestData.NativeThreeDSEnum.PREFERRED));
+        paymentRequest.setAuthenticationData(authenticationData);
+        
+        // ...
+    }
+```
+
 </details>
 
 On the frontend, we'll need to override the `onAdditionalDetails(...)` function in `adyenWebImplementation.js` to call `/api/payments/details` to finalize the payment, after the Native 3DS2 authentication.
@@ -850,7 +866,7 @@ public RedirectView redirect(@RequestParam(required = false) String payload, @Re
 You can receive webhooks by enabling webhooks in the Customer Area, followed by creating your `/webhooks`-endpoint in `controllers/WebhookController.java`.
    - [Read the documentation to understand why we need to enable and verify HMAC signatures](https://docs.adyen.com/development-resources/webhooks/verify-hmac-signatures/)
    - Create a standard webhook in your Customer Area. Example URL: `https://xxxx.github.dev/webhooks`
-   - Inject your `ADYEN_HMAC_KEY` in your `ApplicationConfiguration.java` by either exporting the `ADYEN_HMAC_KEY` value or adding it to `application.properties`. You can then use this key to verify the incoming HMAC signature from your webhoo
+   - Inject your `ADYEN_HMAC_KEY` in your `ApplicationConfiguration.java` by either exporting the `ADYEN_HMAC_KEY` value or adding it to `application.properties`. You can then use this key to verify the incoming HMAC signature from your webhooks.
 
 <details>
   <summary>Click to show me the answer</summary>
