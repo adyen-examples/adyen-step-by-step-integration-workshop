@@ -25,8 +25,8 @@ public class DependencyInjectionConfiguration {
     }
 
     @Bean
-    PaymentsApi paymentsApi(){
-        return new PaymentsApi(client());
+    PaymentsApi paymentsApi(Client client) {
+        return new PaymentsApi(client);
     }
 
     @Bean
