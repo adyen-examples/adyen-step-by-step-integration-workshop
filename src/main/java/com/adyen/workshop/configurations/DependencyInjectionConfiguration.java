@@ -21,11 +21,14 @@ public class DependencyInjectionConfiguration {
         // Step 4
         var config = new Config();
 
+        
+
         return new Client(config);
     }
 
     @Bean
     PaymentsApi paymentsApi(Client client) {
+        client.setApplicationName("adyen-step-by-step-integration-workshop workshop-checkout-example");
         return new PaymentsApi(client);
     }
 
